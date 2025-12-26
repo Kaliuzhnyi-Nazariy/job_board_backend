@@ -9,7 +9,7 @@ export interface ISignUp {
 
 export interface IResponse {
   ok: boolean;
-  payload?: { token: string };
+  payload?: string;
   code?: number;
   message?: string;
 }
@@ -27,3 +27,9 @@ export type AuthResponse =
   | { ok: false; code: number; message: string };
 
 export type ISignIn = Pick<ISignUp, "email" | "password">;
+
+export interface IChangePassword {
+  password: string;
+  confirmPassword: string;
+  token: string;
+}
