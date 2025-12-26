@@ -19,7 +19,14 @@ const initDB = async () => {
     email VARCHAR(128) UNIQUE,
     password VARCHAR(256) NOT NULL
     );
-        `);
+
+    CREATE TABLE IF NOT EXISTS password_reset_tokens (
+    id UUID PRIMARY KEY,
+    user_id INT REFERENCES users(id) UNIQUE,
+    token_hash TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT now()
+    );
+  `);
 
     console.log("created successully!");
   } catch (error) {
@@ -28,3 +35,10 @@ const initDB = async () => {
 };
 
 export default initDB;
+
+// CREATE TABLE IF NOT EXISTS password_reset_tokens (
+// id UUID PRIMARY KEY,
+// user_id INT REFERENCES users(id) UNIQUE,
+// token_hash TEXT NOT NULL,
+// expires_at TIMESTAMP NOT NULL,
+// created_at TIMESTAMP DEFAULT now()
