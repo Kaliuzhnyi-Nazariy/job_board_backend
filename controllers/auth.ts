@@ -1,10 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import {
-  IResponse,
-  ISignUp,
-  AuthResponse,
-  ISignIn,
-} from "../sevice/interfaces";
+import { IResponse, ISignUp, ISignIn } from "../sevice/interfaces";
 
 import authService from "../sevice/auth";
 import { errorHandler } from "../helper/errorHandler";
@@ -56,19 +51,50 @@ const signin = async (
   res.status(200).json({ ok: result.ok });
 };
 
-const logout = async (req: Request, res: Response, next: NextFunction) => {};
+const logout = async (req: Request, res: Response, next: NextFunction) => {
+  res.clearCookie("token", helper.cookieSettings);
+  res.status(200).json({ ok: true });
+};
 
 const sendEmailForResetPassword = async (
   req: Request,
-  res: Response,
+  res: Response<IResponse>,
   next: NextFunction
-) => {};
+) => {
+  const { email } = req.body;
+
+  const result = await authService.sendEmail(email);
+
+  if (!result.ok) {
+    return next(errorHandler(result.code, result.message));
+  }
+
+  if (result && !result.payload) {
+    return next(errorHandler(500));
+  }
+
+  res.status(200).json({ ok: true, payload: result.payload });
+};
 
 const changePassword = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  const { password, confirmPassword, token } = req.body;
+
+  const result = await authService.changePassword({
+    password,
+    confirmPassword,
+    token,
+  });
+
+  if (!result.ok) {
+    return next(errorHandler(result.code, result.message));
+  }
+
+  res.status(200).json({ ok: true });
+};
 
 export default {
   signup,
