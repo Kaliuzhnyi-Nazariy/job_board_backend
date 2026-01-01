@@ -33,3 +33,16 @@ export interface IChangePassword {
   confirmPassword: string;
   token: string;
 }
+
+// user interfaces
+
+export interface IUser {
+  role: string;
+  username: string;
+  fullname: string;
+  email: string;
+}
+
+export type GetMe =
+  | { ok: false; code: number; message?: string }
+  | { ok: true; user: IUser };

@@ -1,17 +1,25 @@
 import { Router } from "express";
-import ctrl from "../controllers/auth";
+import authCtrl from "../controllers/auth";
+import userCtrl from "../controllers/user";
 import middlewares from "../middlewares";
+import isAuthenticated from "../middlewares/authenticated";
 
 const router = Router();
 
-router.post("/auth/signup", ctrl.signup);
+// auth
 
-router.post("/auth/signin", ctrl.signin);
+router.post("/auth/signup", authCtrl.signup);
 
-router.post("/auth/signout", middlewares.isAuthenticated, ctrl.logout);
+router.post("/auth/signin", authCtrl.signin);
 
-router.post("/auth/email-for-reset", ctrl.sendEmailForResetPassword);
+router.post("/auth/signout", middlewares.isAuthenticated, authCtrl.logout);
 
-router.post("/auth/reset-password", ctrl.changePassword);
+router.post("/auth/email-for-reset", authCtrl.sendEmailForResetPassword);
+
+router.post("/auth/reset-password", authCtrl.changePassword);
+
+// user
+
+router.get("/get-me", isAuthenticated, userCtrl.getMe);
 
 export default router;
