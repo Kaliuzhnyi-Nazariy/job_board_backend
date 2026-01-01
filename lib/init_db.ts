@@ -20,11 +20,12 @@ const initDB = async () => {
     password VARCHAR(256) NOT NULL
     );
 
-    CREATE TABLE IF NOT EXISTS password_reset_tokens (
-    id UUID PRIMARY KEY,
-    user_id INT REFERENCES users(id) UNIQUE,
-    token_hash TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT now()
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+id UUID PRIMARY KEY,
+user_id INT REFERENCES users(id) UNIQUE,
+token_hash TEXT NOT NULL,
+expires_at TIMESTAMP NOT NULL,
+created_at TIMESTAMP DEFAULT now()
     );
   `);
 
@@ -35,6 +36,13 @@ const initDB = async () => {
 };
 
 export default initDB;
+
+// final:
+// CREATE TABLE IF NOT EXISTS password_reset_tokens (
+// id UUID PRIMARY KEY,
+// user_id INT REFERENCES users(id) UNIQUE,
+// token_hash TEXT NOT NULL,
+// created_at TIMESTAMP DEFAULT now()
 
 // CREATE TABLE IF NOT EXISTS password_reset_tokens (
 // id UUID PRIMARY KEY,

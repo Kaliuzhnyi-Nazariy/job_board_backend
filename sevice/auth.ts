@@ -112,31 +112,37 @@ const sendEmail = async (email: string): Promise<AuthResponse> => {
     expiresIn: "24h",
   });
 
-  const isMailSent = await helper.sendEmail({
-    email,
-    fullName: userFullName,
-    tokenId: token,
-  });
+  // const isMailSent = await helper.sendEmail({
+  //   email,
+  //   fullName: userFullName,
+  //   tokenId: token,
+  // });
 
-  if (!isMailSent.ok) {
-    return { ok: false, code: 400, message: "Mail error!" };
-  }
+  // if (!isMailSent.ok) {
+  //   return { ok: false, code: 400, message: "Mail error!" };
+  // }
 
   const hashedToken = await bcrypt.hash(token, 10);
 
   const tokenUUID = uuidv4();
 
-  // const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
-  // await db.query(
-  //   "INSERT INTO password_reset_tokens (id, user_id, token_hash, expires_at) VALUES ($1, $2, $3, $4)",
-  //   [tokenUUID, userId, hashedToken, expiresAt]
-  // );
-
-  await db.query(
-    "INSERT INTO password_reset_tokens (id, user_id, token_hash) VALUES ($1, $2, $3)",
-    [tokenUUID, userId, hashedToken]
-  );
+  try {
+    await db.query(
+      "INSERT INTO password_reset_tokens (id, user_id, token_hash, expires_at) VALUES ($1, $2, $3, $4)",
+      [tokenUUID, userId, hashedToken, expiresAt]
+    );
+  } catch (error: unknown) {
+    console.log(error);
+    if ((error as { code: string }).code === "23505") {
+      return {
+        ok: false,
+        code: 409,
+        message: "Token have already been sent to your email!",
+      };
+    }
+  }
 
   return { ok: true, payload: token };
 };
@@ -158,9 +164,14 @@ const changePassword = async ({
 
   const secret = new TextEncoder().encode(JWT_RESET_PASSWORD_SECRET!);
 
-  const isTokenValid = await jose.jwtVerify(token, secret);
+  let userId;
 
-  const userId = isTokenValid.payload.userId;
+  try {
+    const isTokenValid = await jose.jwtVerify(token, secret);
+    userId = isTokenValid.payload.userId;
+  } catch (error) {
+    return { ok: false, code: 400, message: "Invalid or expired token!" };
+  }
 
   const isToken = await db.query(
     "SELECT * FROM password_reset_tokens WHERE user_id=$1",
@@ -176,10 +187,6 @@ const changePassword = async ({
   }
 
   const res = isToken.rows[0];
-
-  // if (res.expires_at < new Date()) {
-  //   return { ok: false, code: 410, message: "Token expired!" };
-  // }
 
   const isTokensSame = await bcrypt.compare(token, res.token_hash);
 
