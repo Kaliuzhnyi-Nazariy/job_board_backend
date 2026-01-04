@@ -4,12 +4,18 @@ const initDB = async () => {
   try {
     // create user db
     await db.query(`
-    DO $$
-    BEGIN
+      CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+DO $$
+BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'roles') THEN
         CREATE TYPE roles AS ENUM ('employer', 'candidate');
     END IF;
-    END$$;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'worktimes') THEN
+        CREATE TYPE worktimes AS ENUM ('full_time', 'part_time', 'internship', 'contract');
+    END IF;
+END$$ LANGUAGE plpgsql;
 
     CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY NOT NULL,
@@ -27,6 +33,17 @@ token_hash TEXT NOT NULL,
 expires_at TIMESTAMP NOT NULL,
 created_at TIMESTAMP DEFAULT now()
     );
+
+    CREATE TABLE IF NOT EXISTS jobs (
+id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+title VARCHAR(128) NOT NULL,
+location VARCHAR(256) NOT NULL,
+position VARCHAR(128) NOT NULL,
+salary VARCHAR(128) NOT NULL,
+workTime worktimes NOT NULL,
+owner INT REFERENCES users(id),
+createdAt TIMESTAMP DEFAULT now()
+)
   `);
 
     console.log("created successully!");

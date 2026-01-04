@@ -1,3 +1,9 @@
+interface ErrorReqResponse {
+  ok: false;
+  code: number;
+  message?: string;
+}
+
 export interface ISignUp {
   role: "employer" | "candidate";
   fullName: string;
@@ -43,6 +49,30 @@ export interface IUser {
   email: string;
 }
 
-export type GetMe =
-  | { ok: false; code: number; message?: string }
-  | { ok: true; user: IUser };
+export type GetMe = ErrorReqResponse | { ok: true; user: IUser };
+
+// job interfaces
+
+export interface PostJob {
+  title: string;
+  location: string;
+  position: string;
+  salary: string;
+  description: string;
+  workTime: "full_time" | "part_time" | "internship" | "contract";
+  owner: string;
+}
+
+export type UpdateJob = Omit<PostJob, "owner"> & {
+  jobId: string;
+  description: string;
+};
+
+export interface IJobData extends PostJob {
+  createdAt: Date;
+  [key: string]: unknown;
+}
+
+export type EmployerJobRes =
+  | { ok: true; job: IJobData | IJobData[] }
+  | ErrorReqResponse;
