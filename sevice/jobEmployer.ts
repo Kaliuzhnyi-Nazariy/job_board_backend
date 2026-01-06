@@ -11,13 +11,27 @@ const postJob = async ({
   position,
   location,
   salary,
+  education,
+  experience,
+  responsobilities,
   workTime,
   description,
   owner,
 }: PostJob): Promise<EmployerJobRes> => {
   const newJob = await db.query(
-    "INSERT INTO jobs (title, location, position, salary, workTime, description, owner) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
-    [title, location, position, salary, workTime, description, owner]
+    "INSERT INTO jobs (title, location, position, salary, education, experience, description, responsobilities, work_time, owner_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *",
+    [
+      title,
+      location,
+      position,
+      salary,
+      education,
+      experience,
+      description,
+      responsobilities,
+      workTime,
+      owner,
+    ]
   );
 
   if (newJob.rows.length == 0) {
@@ -32,7 +46,9 @@ const getJobs = async ({
 }: {
   ownerId: string;
 }): Promise<EmployerJobRes> => {
-  const result = await db.query(`SELECT * FROM jobs WHERE owner=$1`, [ownerId]);
+  const result = await db.query(`SELECT * FROM jobs WHERE owner_id=$1`, [
+    ownerId,
+  ]);
 
   if (result.rows.length === 0) {
     return { ok: false, code: 404, message: "Jobs not found!" };

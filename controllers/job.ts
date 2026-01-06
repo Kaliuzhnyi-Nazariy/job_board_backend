@@ -6,7 +6,17 @@ import { errorHandler } from "../helper/errorHandler";
 
 const postJob = async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req as unknown as CustomRequest;
-  const { title, position, location, salary, workTime, description } = req.body;
+  const {
+    title,
+    position,
+    location,
+    salary,
+    responsobilities,
+    education,
+    experience,
+    workTime,
+    description,
+  } = req.body;
 
   const response = await employerService.postJob({
     title,
@@ -16,6 +26,9 @@ const postJob = async (req: Request, res: Response, next: NextFunction) => {
     workTime,
     description,
     owner: userId,
+    responsobilities,
+    education,
+    experience,
   });
 
   if (!response.ok) {

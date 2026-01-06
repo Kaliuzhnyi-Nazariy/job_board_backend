@@ -58,7 +58,10 @@ export interface PostJob {
   location: string;
   position: string;
   salary: string;
+  education?: string;
+  experience?: string;
   description: string;
+  responsobilities?: string;
   workTime: "full_time" | "part_time" | "internship" | "contract";
   owner: string;
 }
