@@ -36,13 +36,24 @@ created_at TIMESTAMP DEFAULT now()
 
     CREATE TABLE IF NOT EXISTS jobs (
 id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-title VARCHAR(128) NOT NULL,
-location VARCHAR(256) NOT NULL,
-position VARCHAR(128) NOT NULL,
-salary VARCHAR(128) NOT NULL,
-workTime worktimes NOT NULL,
-owner INT REFERENCES users(id),
-createdAt TIMESTAMP DEFAULT now()
+
+    title VARCHAR(128) NOT NULL,
+    location VARCHAR(256) NOT NULL,
+    position VARCHAR(128) NOT NULL,
+    salary VARCHAR(128) NOT NULL,
+
+    education VARCHAR(128),
+    experience VARCHAR(128),
+
+    description VARCHAR(256)
+        CHECK (char_length(trim(description)) BETWEEN 20 AND 1048),
+
+    responsobilities VARCHAR(256) CHECK (char_length(trim(description)) BETWEEN 20 AND 1048),
+
+    work_time workTimes,
+    owner_id INT REFERENCES users(id),
+
+    created_at TIMESTAMP DEFAULT now()
 )
   `);
 
