@@ -41,7 +41,7 @@ const postJob = async ({
   return { ok: true, job: newJob.rows[0] };
 };
 
-const getJobs = async ({
+const getMyJobs = async ({
   ownerId,
 }: {
   ownerId: string;
@@ -94,4 +94,4 @@ const deleteJob = async ({
   return { ok: true, job: res.rows[0] };
 };
 
-export default { postJob, getJobs, updateJob, deleteJob };
+export default { postJob, getMyJobs, updateJob, deleteJob };
