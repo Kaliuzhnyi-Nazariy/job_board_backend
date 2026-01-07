@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { CustomRequest } from "../middlewares/interfaces";
 
 import employerService from "../sevice/jobEmployer";
+import candidateService from "../sevice/jobCandidate";
+
 import { errorHandler } from "../helper/errorHandler";
 
 const postJob = async (req: Request, res: Response, next: NextFunction) => {
@@ -42,9 +44,9 @@ const postJob = async (req: Request, res: Response, next: NextFunction) => {
   res.status(201).json(response);
 };
 
-const getJobs = async (req: Request, res: Response, next: NextFunction) => {
+const getMyJobs = async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req as unknown as CustomRequest;
-  const result = await employerService.getJobs({ ownerId: userId });
+  const result = await employerService.getMyJobs({ ownerId: userId });
 
   if (!result.ok) {
     return next(errorHandler(result.code, result.message));
@@ -85,4 +87,14 @@ const deleteJob = async (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json(result);
 };
 
-export default { postJob, getJobs, updateJob, deleteJob };
+const getJob = async (req: Request, res: Response, next: NextFunction) => {
+  const result = await candidateService.getJobs();
+
+  if (!result.ok) {
+    return next(errorHandler(result.code));
+  }
+
+  res.status(200).json(result.job);
+};
+
+export default { postJob, getMyJobs, updateJob, deleteJob, getJob };
