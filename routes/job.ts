@@ -6,10 +6,14 @@ const router = Router();
 
 router.post("/post", isAuthenticated, jobController.postJob);
 
-router.get("/my-jobs", isAuthenticated, jobController.getJobs);
+router.get("/my-jobs", isAuthenticated, jobController.getMyJobs);
 
 router.put("/update/:jobId", isAuthenticated, jobController.updateJob);
 
 router.delete("/delete/:jobId", isAuthenticated, jobController.deleteJob);
+
+// candidate
+
+router.get("/jobs", isAuthenticated, jobController.getJob);
 
 export default router;
