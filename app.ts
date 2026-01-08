@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 
 import userRoutes from "./routes/user";
 import jobRoutes from "./routes/job";
+import candidateRoutes from "./routes/candidate";
 import errorRoute from "./routes/error";
 
 const app = express();
@@ -23,6 +24,8 @@ app.use(cookieParser());
 app.use("/api/user", userRoutes);
 
 app.use("/api/job", jobRoutes);
+
+app.use("/api/candidate", candidateRoutes);
 
 app.use(errorRoute.notFoundError);
 

@@ -93,3 +93,12 @@ export type CandidateJobRes =
       };
     }
   | ErrorReqResponse;
+
+// candidates
+
+export type Candidates =
+  | {
+      ok: true;
+      data: IUser | IUser[];
+    }
+  | ErrorReqResponse;
