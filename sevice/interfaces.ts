@@ -79,3 +79,17 @@ export interface IJobData extends PostJob {
 export type EmployerJobRes =
   | { ok: true; job: IJobData | IJobData[] }
   | ErrorReqResponse;
+
+export type CandidateJobRes =
+  | {
+      ok: true;
+      data: {
+        jobs: IJobData | IJobData[];
+        meta: {
+          page: number;
+          limit: 12 | 16;
+          total: number;
+        };
+      };
+    }
+  | ErrorReqResponse;

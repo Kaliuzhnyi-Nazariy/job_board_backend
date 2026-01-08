@@ -1,14 +1,47 @@
 import db from "../lib/db";
-import { EmployerJobRes } from "./interfaces";
+import { CandidateJobRes, EmployerJobRes } from "./interfaces";
 
-const getJobs = async (): Promise<EmployerJobRes> => {
-  const res = await db.query("SELECT * FROM jobs");
+interface IGetJobsParams {
+  page: number;
+  limit: 12 | 16;
+  order: "newest" | "oldest";
+}
+
+const getJobs = async ({
+  page,
+  limit,
+  order,
+}: IGetJobsParams): Promise<CandidateJobRes> => {
+  const offset = (page - 1) * limit;
+  const orderBy = order === "newest" ? "DESC" : "ASC";
+
+  const resTotal = await db.query("SELECT COUNT(*) FROM jobs");
+
+  const res = await db.query(
+    `
+    SELECT *
+    FROM jobs
+    ORDER BY created_at ${orderBy}
+    LIMIT $1 OFFSET $2
+    `,
+    [limit, offset]
+  );
 
   if (res.rowCount == 0) {
     return { ok: false, code: 500, message: "Server error!" };
   }
 
-  return { ok: true, job: res.rows };
+  return {
+    ok: true,
+    data: {
+      jobs: res.rows,
+      meta: {
+        page: page,
+        limit: limit,
+        total: Number(resTotal.rows[0].count),
+      },
+    },
+  };
 };
 
 export default { getJobs };

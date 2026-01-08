@@ -88,13 +88,19 @@ const deleteJob = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const getJob = async (req: Request, res: Response, next: NextFunction) => {
-  const result = await candidateService.getJobs();
+  const { page, limit, order } = req.query;
+
+  const result = await candidateService.getJobs({
+    page: Number(page),
+    limit: Number(limit) as 12 | 16,
+    order: order as "newest" | "oldest",
+  });
 
   if (!result.ok) {
     return next(errorHandler(result.code));
   }
 
-  res.status(200).json(result.job);
+  res.status(200).json(result.data);
 };
 
 export default { postJob, getMyJobs, updateJob, deleteJob, getJob };
