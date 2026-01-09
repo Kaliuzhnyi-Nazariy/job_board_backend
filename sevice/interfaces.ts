@@ -111,9 +111,35 @@ export type CandidateJobRes =
 
 // candidates
 
+export type FullDataCandidate = Omit<IUser, "role"> & {
+  id: string;
+  biography: string;
+  speciality?: string;
+  date_of_birth?: Date;
+  gender?: "Mr" | "Ms" | "Mx";
+  experience?: string;
+  education?: string;
+  website?: string;
+  location?: string;
+  phone?: string;
+  [key: string]: unknown;
+};
+
+// date_of_birth DATE,
+// 	gender genders,
+// 	experience VARCHAR(64),
+// 	education VARCHAR(128),
+
+// 	website VARCHAR(256),
+// 	location VARCHAR(256),
+// 	phone VARCHAR(32),
+
+// 	created_at TIMESTAMP DEFAULT NOW(),
+// 	updated_at TIMESTAMP DEFAULT NOW()
+
 export type Candidates =
   | {
       ok: true;
-      data: IUser | IUser[];
+      data: IUser | IUser[] | FullDataCandidate;
     }
   | ErrorReqResponse;
