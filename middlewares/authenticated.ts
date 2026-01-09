@@ -23,10 +23,10 @@ const isAuthenticated = async (
 
   const tokenData = check.payload;
 
-  const user = await db.query("SELECT * FROM users where id=$1 and email=$2", [
-    tokenData.id,
-    tokenData.email,
-  ]);
+  const user = await db.query(
+    "SELECT id, role, full_name, username, email FROM users where id=$1 and email=$2",
+    [tokenData.id, tokenData.email]
+  );
 
   if (user.rows.length === 0) {
     return next(errorHandler(401));
