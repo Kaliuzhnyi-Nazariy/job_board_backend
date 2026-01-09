@@ -63,6 +63,8 @@ id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 CREATE TABLE IF NOT EXISTS candidate_profiles (
     user_id INT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
    
+    biography VARCHAR(1024) DEFAULT '',
+
 	speciality VARCHAR(128),
 	date_of_birth DATE, 
 	gender genders,
