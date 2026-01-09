@@ -1,8 +1,3 @@
-// /*
-//     we receive data for job (title, position, location, salary, workTime, owner_id)
-//     add to db and return new job writing from DB.
-// */
-
 import db from "../lib/db";
 import { EmployerJobRes, IJobData, PostJob, UpdateJob } from "./interfaces";
 
