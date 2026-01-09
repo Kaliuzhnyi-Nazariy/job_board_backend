@@ -15,12 +15,16 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'worktimes') THEN
         CREATE TYPE worktimes AS ENUM ('full_time', 'part_time', 'internship', 'contract');
     END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'genders') THEN
+        CREATE TYPE genders AS ENUM ('Mr', 'Ms', 'Mx');
+    END IF;
 END$$ LANGUAGE plpgsql;
 
     CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY NOT NULL,
     role roles,
-    fullName VARCHAR(128) NOT NULL,
+    full_name VARCHAR(128) NOT NULL,
     username VARCHAR(128) NOT NULL,
     email VARCHAR(128) UNIQUE,
     password VARCHAR(256) NOT NULL
@@ -54,7 +58,24 @@ id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     owner_id INT REFERENCES users(id),
 
     created_at TIMESTAMP DEFAULT now()
-)
+);
+
+CREATE TABLE IF NOT EXISTS candidate_profiles (
+    user_id INT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+   
+	speciality VARCHAR(128),
+	date_of_birth DATE, 
+	gender genders,
+	experience VARCHAR(64),
+	education VARCHAR(128),
+
+	website VARCHAR(256),
+	location VARCHAR(256),
+	phone VARCHAR(32),
+	
+	created_at TIMESTAMP DEFAULT NOW(),
+	updated_at TIMESTAMP DEFAULT NOW()
+);
   `);
 
     console.log("created successully!");
