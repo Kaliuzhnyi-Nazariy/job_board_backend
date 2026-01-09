@@ -46,9 +46,9 @@ const signin = async (
     return next(errorHandler(result.code, result.message));
   }
 
-  res.cookie("token", result.payload, helper.cookieSettings);
+  res.cookie("token", result.payload.token, helper.cookieSettings);
 
-  res.status(200).json({ ok: result.ok });
+  res.status(200).json({ ok: result.ok, data: result.payload.role });
 };
 
 const logout = async (req: Request, res: Response, next: NextFunction) => {
@@ -73,7 +73,7 @@ const sendEmailForResetPassword = async (
     return next(errorHandler(500));
   }
 
-  res.status(200).json({ ok: true, payload: result.payload });
+  res.status(200).json({ ok: true, data: result.payload });
 };
 
 const changePassword = async (
