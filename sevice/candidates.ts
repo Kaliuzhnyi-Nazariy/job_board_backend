@@ -3,7 +3,7 @@ import { Candidates } from "./interfaces";
 
 const getCandidates = async (): Promise<Candidates> => {
   const res = await db.query(
-    "SELECT id, role, fullname, username, email FROM users WHERE role='candidate'"
+    "SELECT id, role, full_name, username, email FROM users WHERE role='candidate'"
   );
 
   if (res.rowCount == 0) {
@@ -15,7 +15,7 @@ const getCandidates = async (): Promise<Candidates> => {
 
 const getCandidate = async (id: string): Promise<Candidates> => {
   const res = await db.query(
-    "SELECT id, role, fullname, username, email FROM users WHERE role='candidate' AND id=$1",
+    "SELECT id, role, full_name, username, email FROM users WHERE role='candidate' AND id=$1",
     [id]
   );
 

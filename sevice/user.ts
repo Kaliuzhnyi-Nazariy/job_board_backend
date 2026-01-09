@@ -8,7 +8,7 @@ import { GetMe, IUser } from "./interfaces";
 
 const getMe = async (userId: string): Promise<GetMe> => {
   const user = await db.query<IUser>(
-    "SELECT role, username, fullname, email FROM users WHERE id=$1;",
+    "SELECT role, username, full_name, email FROM users WHERE id=$1;",
     [userId]
   );
 

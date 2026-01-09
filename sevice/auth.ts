@@ -1,7 +1,13 @@
 import db from "../lib/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { ISignIn, ISignUp, AuthResponse, IChangePassword } from "./interfaces";
+import {
+  ISignIn,
+  ISignUp,
+  AuthResponse,
+  IChangePassword,
+  AuthSigninResponse,
+} from "./interfaces";
 import helper from "../helper";
 import { v4 as uuidv4 } from "uuid";
 import jose from "jose";
@@ -36,7 +42,7 @@ const signup = async ({
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const newUser = await db.query(
-    "INSERT INTO users (role, fullName, username, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING email, id, role, username, fullName",
+    "INSERT INTO users (role, full_name, username, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING email, id, role, username, full_name",
     [role, fullName, username, email, hashedPassword]
   );
 
@@ -58,7 +64,10 @@ Checking passwords
 generating new token  
 */
 
-const signin = async ({ email, password }: ISignIn): Promise<AuthResponse> => {
+const signin = async ({
+  email,
+  password,
+}: ISignIn): Promise<AuthSigninResponse> => {
   const user = await db.query("SELECT * FROM users WHERE email=$1", [email]);
 
   if (user.rows.length == 0) {
@@ -76,11 +85,18 @@ const signin = async ({ email, password }: ISignIn): Promise<AuthResponse> => {
   const payload = {
     id: userData.id,
     email: userData.email,
+    role: userData.role,
   };
 
   const token = jwt.sign(payload, JWT_SECRET!, { expiresIn: "96h" });
 
-  return { ok: true, payload: token };
+  return {
+    ok: true,
+    payload: {
+      token,
+      role: userData.role,
+    },
+  };
 };
 
 /* 
@@ -91,9 +107,10 @@ store hashed one on password_reset_tokens db and raw is sent to frontend to add 
 */
 
 const sendEmail = async (email: string): Promise<AuthResponse> => {
-  const user = await db.query("SELECT id, fullName FROM users WHERE email=$1", [
-    email,
-  ]);
+  const user = await db.query(
+    "SELECT id, full_name FROM users WHERE email=$1",
+    [email]
+  );
 
   if (user.rows.length === 0) {
     return {
@@ -103,7 +120,7 @@ const sendEmail = async (email: string): Promise<AuthResponse> => {
     };
   }
 
-  const userFullName = user.rows[0].fullname;
+  const userFullName = user.rows[0].full_name;
   const userId = user.rows[0].id;
 
   const payload = { userId };
