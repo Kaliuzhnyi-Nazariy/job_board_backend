@@ -19,7 +19,9 @@ const { JWT_SECRET, JWT_RESET_PASSWORD_SECRET } = process.env;
   2. Returning user-friendly error messages.
   3. Return token to controller to set it in cookies
   3.1. Not return user, because we will get it from /user/me.
-*/
+
+  4. if new user role is candidate create candidate profile automaticaly
+  */
 
 const signup = async ({
   role,
@@ -54,6 +56,12 @@ const signup = async ({
   const token = jwt.sign(payload, JWT_SECRET!, {
     expiresIn: "96h",
   });
+
+  if (role === "candidate") {
+    await db.query("INSERT INTO candidate_profiles (user_id) VALUES ($1)", [
+      newUser.rows[0].id,
+    ]);
+  }
 
   return { ok: true, payload: token };
 };
