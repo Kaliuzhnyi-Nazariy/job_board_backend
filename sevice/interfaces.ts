@@ -15,10 +15,15 @@ export interface ISignUp {
 
 export interface IResponse {
   ok: boolean;
-  payload?: string;
+  data?: { data: { role: "employer" | "candidate" } } | string;
   code?: number;
   message?: string;
 }
+
+// export interface ISigninResponse extends IResponse {
+//   ok: boolean;
+//   payload: { data: { role: "employer" | "candidate" } } | string;
+// }
 
 // export type SignupResponse =
 //   | { ok: true; payload: string }
@@ -30,6 +35,16 @@ export interface IResponse {
 
 export type AuthResponse =
   | { ok: true; payload: string }
+  | { ok: false; code: number; message: string };
+
+export type AuthSigninResponse =
+  | {
+      ok: true;
+      payload: {
+        token: string;
+        role: "employer" | "candidate";
+      };
+    }
   | { ok: false; code: number; message: string };
 
 export type ISignIn = Pick<ISignUp, "email" | "password">;
@@ -45,7 +60,7 @@ export interface IChangePassword {
 export interface IUser {
   role: string;
   username: string;
-  fullname: string;
+  full_name: string;
   email: string;
 }
 
