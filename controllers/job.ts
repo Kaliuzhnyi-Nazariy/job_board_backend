@@ -69,7 +69,17 @@ const getMyJob = async (req: Request, res: Response, next: NextFunction) => {
 
 const updateJob = async (req: Request, res: Response, next: NextFunction) => {
   const { jobId } = req.params;
-  const { title, position, location, salary, workTime, description } = req.body;
+  const {
+    title,
+    position,
+    location,
+    salary,
+    workTime,
+    description,
+    education,
+    experience,
+    responsobilities,
+  } = req.body;
 
   const result = await employerService.updateJob({
     title,
@@ -79,6 +89,9 @@ const updateJob = async (req: Request, res: Response, next: NextFunction) => {
     workTime,
     description,
     jobId,
+    education,
+    experience,
+    responsobilities,
   });
 
   if (!result.ok) {

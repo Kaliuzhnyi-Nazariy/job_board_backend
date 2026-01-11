@@ -79,10 +79,24 @@ const updateJob = async ({
   workTime,
   description,
   jobId,
+  education,
+  responsobilities,
+  experience,
 }: Partial<UpdateJob>): Promise<EmployerJobRes> => {
   const res = await db.query(
-    "UPDATE jobs SET title=$1, position=$2, location=$3, salary=$4, workTime=$5, description=%6 WHERE id=$7 RETURNING *",
-    [title, position, location, salary, workTime, description, jobId]
+    "UPDATE jobs SET title=$1, position=$2, location=$3, salary=$4,education=$5, experience=$6, responsobilities=$7,  work_time=$8, description=$9 WHERE id=$10 RETURNING *",
+    [
+      title,
+      position,
+      location,
+      salary,
+      education,
+      experience,
+      responsobilities,
+      workTime,
+      description,
+      jobId,
+    ]
   );
 
   if (res.rows.length == 0) {
