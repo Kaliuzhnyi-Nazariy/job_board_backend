@@ -55,6 +55,18 @@ const getMyJobs = async (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json(result);
 };
 
+const getMyJob = async (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req as unknown as CustomRequest;
+  const { jobId } = req.params;
+  const result = await employerService.getMyJob({ ownerId: userId, jobId });
+
+  if (!result.ok) {
+    return next(errorHandler(result.code, result.message));
+  }
+
+  res.status(200).json(result);
+};
+
 const updateJob = async (req: Request, res: Response, next: NextFunction) => {
   const { jobId } = req.params;
   const { title, position, location, salary, workTime, description } = req.body;
@@ -103,4 +115,4 @@ const getJob = async (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json(result.data);
 };
 
-export default { postJob, getMyJobs, updateJob, deleteJob, getJob };
+export default { postJob, getMyJobs, getMyJob, updateJob, deleteJob, getJob };

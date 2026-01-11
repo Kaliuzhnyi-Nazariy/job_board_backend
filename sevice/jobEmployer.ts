@@ -52,6 +52,25 @@ const getMyJobs = async ({
   return { ok: true, job: result.rows };
 };
 
+const getMyJob = async ({
+  ownerId,
+  jobId,
+}: {
+  ownerId: string;
+  jobId: string;
+}): Promise<EmployerJobRes> => {
+  const result = await db.query(
+    "SELECT * FROM jobs WHERE owner_id=$1 AND id=$2",
+    [ownerId, jobId]
+  );
+
+  if (result.rows.length === 0) {
+    return { ok: false, code: 404, message: "Job not found!" };
+  }
+
+  return { ok: true, job: result.rows[0] };
+};
+
 const updateJob = async ({
   title,
   position,
@@ -89,4 +108,4 @@ const deleteJob = async ({
   return { ok: true, job: res.rows[0] };
 };
 
-export default { postJob, getMyJobs, updateJob, deleteJob };
+export default { postJob, getMyJobs, getMyJob, updateJob, deleteJob };
