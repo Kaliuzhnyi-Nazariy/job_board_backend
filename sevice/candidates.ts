@@ -1,5 +1,10 @@
 import db from "../lib/db";
-import { Candidates } from "./interfaces";
+import {
+  Candidates,
+  IUser,
+  UpdateCandidateProfile,
+  UpdatePortfolio,
+} from "./interfaces";
 
 const getCandidates = async (): Promise<Candidates> => {
   const res = await db.query(
@@ -47,4 +52,60 @@ WHERE u.id = $1;`,
   return { ok: true, data: res.rows[0] };
 };
 
-export default { getCandidates, getCandidate };
+// make amultiple updates, for personal and candidates profile data, also split candidate upd request
+
+const updatePersonal = async (
+  data: UpdateCandidateProfile
+): Promise<Candidates> => {
+  console.log({ data });
+
+  await db.query("BEGIN");
+
+  try {
+    await db.query(
+      `
+  UPDATE users
+  SET full_name=$1
+  WHERE id=$2
+  `,
+      [data.full_name, data.id]
+    );
+
+    await db.query(
+      `
+      UPDATE candidate_profiles
+      SET
+  speciality=$2, experience=$3, education=$4, website=$5 WHERE user_id = $1
+      `,
+      [data.id, data.speciality, data.experience, data.education, data.website]
+    );
+
+    await db.query("COMMIT");
+    return { ok: true };
+  } catch (err) {
+    await db.query("ROLLBACK");
+    throw err;
+  }
+};
+
+const updateProfile = async ({
+  biogrpahy,
+  date_of_birth,
+  gender,
+  experience,
+  education,
+  id,
+}: UpdatePortfolio): Promise<Candidates> => {
+  try {
+    await db.query(
+      `UPDATE candidate_profiles SET biography=$1, date_of_birth=$2, gender=$3, experience=$4, education=$5 WHERE user_id=$6`,
+      [biogrpahy, date_of_birth, gender, experience, education, id]
+    );
+
+    return { ok: true };
+  } catch (error) {
+    throw error;
+  }
+};
+
+export default { getCandidates, getCandidate, updateProfile, updatePersonal };
