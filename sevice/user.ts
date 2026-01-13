@@ -16,7 +16,7 @@ const getMe = async (userId: string): Promise<GetMe> => {
     return { ok: false, code: 404, message: "User not found!" };
   }
 
-  return { ok: true, user: user.rows[0] };
+  return { ok: true, user: { ...user.rows[0], id: userId } };
 };
 
 export default { getMe };

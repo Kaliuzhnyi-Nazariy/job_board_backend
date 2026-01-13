@@ -58,6 +58,7 @@ export interface IChangePassword {
 // user interfaces
 
 export interface IUser {
+  id: string;
   role: string;
   username: string;
   full_name: string;
@@ -140,6 +141,22 @@ export type FullDataCandidate = Omit<IUser, "role"> & {
 export type Candidates =
   | {
       ok: true;
-      data: IUser | IUser[] | FullDataCandidate;
+      data?: IUser | IUser[] | FullDataCandidate;
     }
   | ErrorReqResponse;
+
+export interface UpdateCandidateProfile {
+  id: string;
+  full_name: string;
+  speciality: string;
+  experience: string;
+  education: string;
+  website: string;
+}
+
+export type UpdatePortfolio = Pick<
+  FullDataCandidate,
+  "biogrpahy" | "date_of_birth" | "gender" | "experience" | "education"
+> & {
+  id: string;
+};
