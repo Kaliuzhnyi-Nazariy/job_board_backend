@@ -89,7 +89,7 @@ const updatePersonal = async (
 };
 
 const updateProfile = async ({
-  biogrpahy,
+  biography,
   date_of_birth,
   gender,
   experience,
@@ -99,7 +99,7 @@ const updateProfile = async ({
   try {
     await db.query(
       `UPDATE candidate_profiles SET biography=$1, date_of_birth=$2, gender=$3, experience=$4, education=$5 WHERE user_id=$6`,
-      [biogrpahy, date_of_birth, gender, experience, education, id]
+      [biography, date_of_birth, gender, experience, education, id]
     );
 
     return { ok: true };

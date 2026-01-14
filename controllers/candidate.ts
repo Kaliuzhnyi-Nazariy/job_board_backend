@@ -62,10 +62,10 @@ const updateCandidateProfile = async (
   next: NextFunction
 ) => {
   const { userId } = req as unknown as CustomRequest;
-  const { biogrpahy, date_of_birth, gender, experience, education } = req.body;
+  const { biography, date_of_birth, gender, experience, education } = req.body;
 
   const result = await candidateService.updateProfile({
-    biogrpahy,
+    biography,
     date_of_birth,
     gender,
     experience,
