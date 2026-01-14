@@ -160,3 +160,7 @@ export type UpdatePortfolio = Pick<
 > & {
   id: string;
 };
+
+// Application
+
+export interface CandidateApplication {}
