@@ -101,7 +101,7 @@ export type CandidateJobRes =
       ok: true;
       data: {
         jobs: IJobData | IJobData[];
-        meta: {
+        meta?: {
           page: number;
           limit: 12 | 16;
           total: number;
@@ -156,7 +156,7 @@ export interface UpdateCandidateProfile {
 
 export type UpdatePortfolio = Pick<
   FullDataCandidate,
-  "biogrpahy" | "date_of_birth" | "gender" | "experience" | "education"
+  "biography" | "date_of_birth" | "gender" | "experience" | "education"
 > & {
   id: string;
 };

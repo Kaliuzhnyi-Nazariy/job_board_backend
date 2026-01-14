@@ -112,7 +112,7 @@ const deleteJob = async (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json(result);
 };
 
-const getJob = async (req: Request, res: Response, next: NextFunction) => {
+const getJobs = async (req: Request, res: Response, next: NextFunction) => {
   const { page, limit, order } = req.query;
 
   const result = await candidateService.getJobs({
@@ -128,4 +128,24 @@ const getJob = async (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json(result.data);
 };
 
-export default { postJob, getMyJobs, getMyJob, updateJob, deleteJob, getJob };
+const getJob = async (req: Request, res: Response, next: NextFunction) => {
+  const { jobId } = req.params;
+
+  const result = await candidateService.getJob(jobId);
+
+  if (!result.ok) {
+    return next(errorHandler(result.code));
+  }
+
+  res.status(200).json(result.data);
+};
+
+export default {
+  postJob,
+  getMyJobs,
+  getMyJob,
+  updateJob,
+  deleteJob,
+  getJobs,
+  getJob,
+};

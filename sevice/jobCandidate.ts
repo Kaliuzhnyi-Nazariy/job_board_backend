@@ -44,4 +44,14 @@ const getJobs = async ({
   };
 };
 
-export default { getJobs };
+const getJob = async (jobId: string): Promise<CandidateJobRes> => {
+  const res = await db.query("SELECT * FROM jobs WHERE id=$1", [jobId]);
+
+  if (res.rows.length === 0) {
+    return { ok: false, code: 404, message: "Job not found!" };
+  }
+
+  return { ok: true, data: { jobs: res.rows[0] } };
+};
+
+export default { getJobs, getJob };

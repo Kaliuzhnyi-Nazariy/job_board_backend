@@ -16,6 +16,8 @@ router.delete("/delete/:jobId", isAuthenticated, jobController.deleteJob);
 
 // candidate
 
-router.get("/jobs", isAuthenticated, jobController.getJob);
+router.get("/jobs", isAuthenticated, jobController.getJobs);
+
+router.get("/jobs/:jobId", isAuthenticated, jobController.getJob);
 
 export default router;
