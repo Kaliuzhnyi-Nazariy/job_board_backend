@@ -78,6 +78,15 @@ CREATE TABLE IF NOT EXISTS candidate_profiles (
 	created_at TIMESTAMP DEFAULT NOW(),
 	updated_at TIMESTAMP DEFAULT NOW()
 );
+
+ CREATE TABLE IF NOT EXISTS job_applications (
+id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+user_id INT REFERENCES users(id) NOT NULL,
+job_id UUID REFERENCES jobs(id)  ON DELETE CASCADE NOT NULL,
+covering_letter VARCHAR(512),
+status statuses default 'applied',
+applied_at TIMESTAMP DEFAULT now()
+ )
   `);
 
     console.log("created successully!");
