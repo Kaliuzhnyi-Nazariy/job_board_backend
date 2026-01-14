@@ -16,4 +16,12 @@ const apply = async (req: Request, res: Response, next: NextFunction) => {
   return res.status(201).json();
 };
 
-export default { apply };
+const getCandidateApplies = async (req: Request, res: Response) => {
+  const { userId } = req as unknown as CustomRequest;
+
+  const result = await applicationService.getCandidatesApplies(userId);
+
+  return res.status(200).json(result);
+};
+
+export default { apply, getCandidateApplies };

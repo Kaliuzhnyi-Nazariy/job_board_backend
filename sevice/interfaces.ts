@@ -69,6 +69,8 @@ export type GetMe = ErrorReqResponse | { ok: true; user: IUser };
 
 // job interfaces
 
+type workTime = "full_time" | "part_time" | "internship" | "contract";
+
 export interface PostJob {
   title: string;
   location: string;
@@ -78,7 +80,7 @@ export interface PostJob {
   experience?: string;
   description: string;
   responsobilities?: string;
-  workTime: "full_time" | "part_time" | "internship" | "contract";
+  workTime: workTime;
   owner: string;
 }
 
@@ -163,4 +165,13 @@ export type UpdatePortfolio = Pick<
 
 // Application
 
-export interface CandidateApplication {}
+type statuses = "applied" | "rejected" | "accepted";
+export interface CandidateApplication {
+  id: string;
+  title: string;
+  location: string;
+  salary: string;
+  work_time: workTime;
+  status: statuses;
+  applied_at: Date;
+}
