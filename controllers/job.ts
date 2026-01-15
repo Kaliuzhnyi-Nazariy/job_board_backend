@@ -13,7 +13,7 @@ const postJob = async (req: Request, res: Response, next: NextFunction) => {
     position,
     location,
     salary,
-    responsobilities,
+    responsibilities,
     education,
     experience,
     workTime,
@@ -28,7 +28,7 @@ const postJob = async (req: Request, res: Response, next: NextFunction) => {
     workTime,
     description,
     owner: userId,
-    responsobilities,
+    responsibilities,
     education,
     experience,
   });
@@ -78,7 +78,7 @@ const updateJob = async (req: Request, res: Response, next: NextFunction) => {
     description,
     education,
     experience,
-    responsobilities,
+    responsibilities,
   } = req.body;
 
   const result = await employerService.updateJob({
@@ -91,7 +91,7 @@ const updateJob = async (req: Request, res: Response, next: NextFunction) => {
     jobId,
     education,
     experience,
-    responsobilities,
+    responsibilities,
   });
 
   if (!result.ok) {

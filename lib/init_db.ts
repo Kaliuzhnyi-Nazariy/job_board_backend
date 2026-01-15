@@ -52,7 +52,7 @@ id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     description VARCHAR(256)
         CHECK (char_length(trim(description)) BETWEEN 20 AND 1048),
 
-    responsobilities VARCHAR(256) CHECK (char_length(trim(description)) BETWEEN 20 AND 1048),
+    responsibilities VARCHAR(256) CHECK (char_length(trim(description)) BETWEEN 20 AND 1048),
 
     work_time workTimes,
     owner_id INT REFERENCES users(id),

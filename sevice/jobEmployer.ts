@@ -8,13 +8,13 @@ const postJob = async ({
   salary,
   education,
   experience,
-  responsobilities,
+  responsibilities,
   workTime,
   description,
   owner,
 }: PostJob): Promise<EmployerJobRes> => {
   const newJob = await db.query(
-    "INSERT INTO jobs (title, location, position, salary, education, experience, description, responsobilities, work_time, owner_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *",
+    "INSERT INTO jobs (title, location, position, salary, education, experience, description, responsibilities, work_time, owner_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *",
     [
       title,
       location,
@@ -23,7 +23,7 @@ const postJob = async ({
       education,
       experience,
       description,
-      responsobilities,
+      responsibilities,
       workTime,
       owner,
     ]
@@ -80,11 +80,11 @@ const updateJob = async ({
   description,
   jobId,
   education,
-  responsobilities,
+  responsibilities,
   experience,
 }: Partial<UpdateJob>): Promise<EmployerJobRes> => {
   const res = await db.query(
-    "UPDATE jobs SET title=$1, position=$2, location=$3, salary=$4,education=$5, experience=$6, responsobilities=$7,  work_time=$8, description=$9 WHERE id=$10 RETURNING *",
+    "UPDATE jobs SET title=$1, position=$2, location=$3, salary=$4,education=$5, experience=$6, responsibilities=$7,  work_time=$8, description=$9 WHERE id=$10 RETURNING *",
     [
       title,
       position,
@@ -92,7 +92,7 @@ const updateJob = async ({
       salary,
       education,
       experience,
-      responsobilities,
+      responsibilities,
       workTime,
       description,
       jobId,

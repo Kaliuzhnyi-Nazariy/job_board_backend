@@ -79,7 +79,7 @@ export interface PostJob {
   education?: string;
   experience?: string;
   description: string;
-  responsobilities?: string;
+  responsibilities?: string;
   workTime: workTime;
   owner: string;
 }
