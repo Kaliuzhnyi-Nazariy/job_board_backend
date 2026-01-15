@@ -9,7 +9,13 @@ router.post("/:jobId", isAuthenticated, ctrl.apply);
 router.get(
   "/candidate-applications",
   isAuthenticated,
-  ctrl.getCandidateApplies
+  ctrl.getCandidateApplications
+);
+
+router.get(
+  "/candidate-applications/:jobApplicationId",
+  isAuthenticated,
+  ctrl.getCandidateApplciationDetails
 );
 
 export default router;

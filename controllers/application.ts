@@ -16,12 +16,31 @@ const apply = async (req: Request, res: Response, next: NextFunction) => {
   return res.status(201).json();
 };
 
-const getCandidateApplies = async (req: Request, res: Response) => {
+const getCandidateApplications = async (req: Request, res: Response) => {
   const { userId } = req as unknown as CustomRequest;
 
-  const result = await applicationService.getCandidatesApplies(userId);
+  const result = await applicationService.getCandidatesApplications(userId);
 
   return res.status(200).json(result);
 };
 
-export default { apply, getCandidateApplies };
+const getCandidateApplciationDetails = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId } = req as unknown as CustomRequest;
+  const { jobApplicationId } = req.params;
+  const result = await applicationService.getCandidateApplciationDetails({
+    userId,
+    jobApplicationId,
+  });
+
+  res.status(200).json(result);
+};
+
+export default {
+  apply,
+  getCandidateApplications,
+  getCandidateApplciationDetails,
+};
