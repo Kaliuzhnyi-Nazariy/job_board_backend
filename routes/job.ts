@@ -8,6 +8,8 @@ router.post("/post", isAuthenticated, jobController.postJob);
 
 router.get("/my-jobs", isAuthenticated, jobController.getMyJobs);
 
+router.get("/my-jobs/recent", isAuthenticated, jobController.getRecentJobs);
+
 router.get("/my-jobs/:jobId", isAuthenticated, jobController.getMyJob);
 
 router.put("/update/:jobId", isAuthenticated, jobController.updateJob);

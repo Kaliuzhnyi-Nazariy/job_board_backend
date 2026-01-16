@@ -1,5 +1,11 @@
 import db from "../lib/db";
-import { EmployerJobRes, IJobData, PostJob, UpdateJob } from "./interfaces";
+import {
+  EmployerJobRes,
+  EmployerRecentJobsRes,
+  IJobData,
+  PostJob,
+  UpdateJob,
+} from "./interfaces";
 
 const postJob = async ({
   title,
@@ -122,4 +128,46 @@ const deleteJob = async ({
   return { ok: true, job: res.rows[0] };
 };
 
-export default { postJob, getMyJobs, getMyJob, updateJob, deleteJob };
+const getRecentJobs = async (
+  userId: string
+): Promise<EmployerRecentJobsRes> => {
+  try {
+    const res = await db.query(
+      `
+      SELECT
+    j.id,
+    j.title,
+    j.work_time,
+    j.position,
+    j.created_at,
+    COUNT(ja.id)::int AS applications_count
+  FROM jobs j
+  LEFT JOIN job_applications ja
+    ON ja.job_id = j.id
+  WHERE j.owner_id = $1
+  GROUP BY
+    j.id,
+    j.title,
+    j.work_time,
+    j.position,
+    j.created_at
+  ORDER BY j.created_at DESC
+  LIMIT 5;
+  `,
+      [userId]
+    );
+
+    return { ok: true, data: res.rows };
+  } catch (error) {
+    throw error;
+  }
+};
+
+export default {
+  postJob,
+  getMyJobs,
+  getMyJob,
+  updateJob,
+  deleteJob,
+  getRecentJobs,
+};

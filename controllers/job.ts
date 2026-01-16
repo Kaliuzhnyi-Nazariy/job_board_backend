@@ -140,6 +140,21 @@ const getJob = async (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json(result.data);
 };
 
+const getRecentJobs = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId } = req as unknown as CustomRequest;
+  const result = await employerService.getRecentJobs(userId);
+
+  if (!result.ok) {
+    return next(errorHandler(500));
+  }
+
+  res.status(200).json(result.data);
+};
+
 export default {
   postJob,
   getMyJobs,
@@ -148,4 +163,5 @@ export default {
   deleteJob,
   getJobs,
   getJob,
+  getRecentJobs,
 };
