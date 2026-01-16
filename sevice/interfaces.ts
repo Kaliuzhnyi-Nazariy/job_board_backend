@@ -98,6 +98,19 @@ export type EmployerJobRes =
   | { ok: true; job: IJobData | IJobData[] }
   | ErrorReqResponse;
 
+export interface EmployerRecentJobs {
+  id: string;
+  title: string;
+  work_time: workTime;
+  position: string;
+  created_at: Date;
+  application_count: number;
+}
+
+export type EmployerRecentJobsRes =
+  | { ok: true; data: EmployerRecentJobs[] }
+  | ErrorReqResponse;
+
 export type CandidateJobRes =
   | {
       ok: true;
@@ -174,4 +187,15 @@ export interface CandidateApplication {
   work_time: workTime;
   status: statuses;
   applied_at: Date;
+}
+
+// employer
+
+export interface JobApplicatinon {
+  id: string;
+  covering_letter: string;
+  status: statuses;
+  applied_at: Date;
+  full_name: string;
+  email: string;
 }
