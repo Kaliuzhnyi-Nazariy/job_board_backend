@@ -1,5 +1,5 @@
 import db from "../lib/db";
-import { CandidateApplication } from "./interfaces";
+import { CandidateApplication, JobApplicatinon } from "./interfaces";
 
 const apply = async ({
   userId,
@@ -61,8 +61,22 @@ const getCandidateApplciationDetails = async ({
   }
 };
 
+const getApplcations = async (jobId: string): Promise<JobApplicatinon[]> => {
+  try {
+    const res = await db.query(
+      `SELECT ja.id, ja.covering_letter, ja.status, ja.applied_at, u.full_name, u.email FROM job_applications ja LEFT JOIN users u ON ja.user_id = u.id WHERE ja.job_id = $1;`,
+      [jobId]
+    );
+
+    return res.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   apply,
   getCandidatesApplications,
   getCandidateApplciationDetails,
+  getApplcations,
 };

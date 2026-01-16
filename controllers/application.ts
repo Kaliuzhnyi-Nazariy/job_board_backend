@@ -39,8 +39,22 @@ const getCandidateApplciationDetails = async (
   res.status(200).json(result);
 };
 
+const getApplications = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // const { userId } = req as unknown as CustomRequest;
+  const { jobId } = req.params;
+
+  const result = await applicationService.getApplcations(jobId);
+
+  res.status(200).json(result);
+};
+
 export default {
   apply,
   getCandidateApplications,
   getCandidateApplciationDetails,
+  getApplications,
 };

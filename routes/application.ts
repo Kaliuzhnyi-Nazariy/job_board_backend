@@ -18,4 +18,6 @@ router.get(
   ctrl.getCandidateApplciationDetails
 );
 
+router.get("/get-applications/:jobId", isAuthenticated, ctrl.getApplications);
+
 export default router;
