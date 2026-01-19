@@ -67,10 +67,27 @@ const getApplicationDetails = async (
   res.status(200).json(result);
 };
 
+const updateApplicationStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { jobApplicationId } = req.params;
+  const { status } = req.body;
+
+  await applicationService.updateApplicationStatus({
+    status,
+    jobApplicationId,
+  });
+
+  res.status(200).json();
+};
+
 export default {
   apply,
   getCandidateApplications,
   getCandidateApplciationDetails,
   getApplications,
   getApplicationDetails,
+  updateApplicationStatus,
 };

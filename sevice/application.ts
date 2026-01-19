@@ -98,10 +98,32 @@ const getApplicationDetails = async ({
   }
 };
 
+const updateApplicationStatus = async ({
+  status,
+  jobApplicationId,
+}: {
+  status: "rejected" | "accepted";
+  jobApplicationId: string;
+}) => {
+  try {
+    await db.query(
+      `
+      UPDATE job_applications SET status = $1 WHERE job_applications.id = $2;
+`,
+      [status, jobApplicationId],
+    );
+
+    return;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   apply,
   getCandidatesApplications,
   getCandidateApplciationDetails,
   getApplcations,
   getApplicationDetails,
+  updateApplicationStatus,
 };

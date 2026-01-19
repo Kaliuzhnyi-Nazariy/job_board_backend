@@ -26,4 +26,10 @@ router.get(
   ctrl.getApplicationDetails,
 );
 
+router.patch(
+  "/update-candidate-status/:jobApplicationId",
+  isAuthenticated,
+  ctrl.updateApplicationStatus,
+);
+
 export default router;
