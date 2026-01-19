@@ -8,7 +8,7 @@ import {
 
 const getCandidates = async (): Promise<Candidates> => {
   const res = await db.query(
-    "SELECT id, role, full_name, username, email FROM users WHERE role='candidate'"
+    "SELECT id, role, full_name, username, email FROM users WHERE role='candidate'",
   );
 
   if (res.rowCount == 0) {
@@ -42,7 +42,7 @@ FROM users u
 JOIN candidate_profiles c
   ON u.id = c.user_id
 WHERE u.id = $1;`,
-    [id]
+    [id],
   );
 
   if (res.rowCount == 0) {
@@ -55,9 +55,9 @@ WHERE u.id = $1;`,
 // make amultiple updates, for personal and candidates profile data, also split candidate upd request
 
 const updatePersonal = async (
-  data: UpdateCandidateProfile
+  data: UpdateCandidateProfile,
 ): Promise<Candidates> => {
-  console.log({ data });
+  // console.log({ data });
 
   await db.query("BEGIN");
 
@@ -68,7 +68,7 @@ const updatePersonal = async (
   SET full_name=$1
   WHERE id=$2
   `,
-      [data.full_name, data.id]
+      [data.full_name, data.id],
     );
 
     await db.query(
@@ -77,7 +77,7 @@ const updatePersonal = async (
       SET
   speciality=$2, experience=$3, education=$4, website=$5 WHERE user_id = $1
       `,
-      [data.id, data.speciality, data.experience, data.education, data.website]
+      [data.id, data.speciality, data.experience, data.education, data.website],
     );
 
     await db.query("COMMIT");
@@ -99,7 +99,7 @@ const updateProfile = async ({
   try {
     await db.query(
       `UPDATE candidate_profiles SET biography=$1, date_of_birth=$2, gender=$3, experience=$4, education=$5 WHERE user_id=$6`,
-      [biography, date_of_birth, gender, experience, education, id]
+      [biography, date_of_birth, gender, experience, education, id],
     );
 
     return { ok: true };
