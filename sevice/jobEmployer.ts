@@ -32,7 +32,7 @@ const postJob = async ({
       responsibilities,
       workTime,
       owner,
-    ]
+    ],
   );
 
   if (newJob.rows.length == 0) {
@@ -67,7 +67,7 @@ const getMyJob = async ({
 }): Promise<EmployerJobRes> => {
   const result = await db.query(
     "SELECT * FROM jobs WHERE owner_id=$1 AND id=$2",
-    [ownerId, jobId]
+    [ownerId, jobId],
   );
 
   if (result.rows.length === 0) {
@@ -102,7 +102,7 @@ const updateJob = async ({
       workTime,
       description,
       jobId,
-    ]
+    ],
   );
 
   if (res.rows.length == 0) {
@@ -114,12 +114,15 @@ const updateJob = async ({
 
 const deleteJob = async ({
   jobId,
+  userId,
 }: {
   jobId: string;
+  userId: string;
 }): Promise<EmployerJobRes> => {
-  const res = await db.query("DELETE FROM jobs WHERE id = $1 RETURNING *", [
-    jobId,
-  ]);
+  const res = await db.query(
+    "DELETE FROM jobs WHERE id = $1 AND owner_id=$2 RETURNING *",
+    [jobId, userId],
+  );
 
   if (res.rows.length == 0) {
     return { ok: false, code: 404 };
@@ -129,7 +132,7 @@ const deleteJob = async ({
 };
 
 const getRecentJobs = async (
-  userId: string
+  userId: string,
 ): Promise<EmployerRecentJobsRes> => {
   try {
     const res = await db.query(
@@ -154,7 +157,7 @@ const getRecentJobs = async (
   ORDER BY j.created_at DESC
   LIMIT 5;
   `,
-      [userId]
+      [userId],
     );
 
     return { ok: true, data: res.rows };

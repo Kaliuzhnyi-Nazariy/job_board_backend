@@ -102,8 +102,9 @@ const updateJob = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const deleteJob = async (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req as unknown as CustomRequest;
   const { jobId } = req.params;
-  const result = await employerService.deleteJob({ jobId });
+  const result = await employerService.deleteJob({ jobId, userId });
 
   if (!result.ok) {
     return next(errorHandler(result.code, result.message));
@@ -143,7 +144,7 @@ const getJob = async (req: Request, res: Response, next: NextFunction) => {
 const getRecentJobs = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { userId } = req as unknown as CustomRequest;
   const result = await employerService.getRecentJobs(userId);
