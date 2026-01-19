@@ -27,7 +27,7 @@ const getCandidateApplications = async (req: Request, res: Response) => {
 const getCandidateApplciationDetails = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { userId } = req as unknown as CustomRequest;
   const { jobApplicationId } = req.params;
@@ -42,7 +42,7 @@ const getCandidateApplciationDetails = async (
 const getApplications = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   // const { userId } = req as unknown as CustomRequest;
   const { jobId } = req.params;
@@ -52,9 +52,25 @@ const getApplications = async (
   res.status(200).json(result);
 };
 
+const getApplicationDetails = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { jobId, applicationId } = req.params;
+
+  const result = await applicationService.getApplicationDetails({
+    jobId,
+    applicationId,
+  });
+
+  res.status(200).json(result);
+};
+
 export default {
   apply,
   getCandidateApplications,
   getCandidateApplciationDetails,
   getApplications,
+  getApplicationDetails,
 };
