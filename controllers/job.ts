@@ -114,12 +114,15 @@ const deleteJob = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const getJobs = async (req: Request, res: Response, next: NextFunction) => {
-  const { page, limit, order } = req.query;
+  // console.log(req.params);
+  const { page, limit, order, location, title } = req.query;
 
   const result = await candidateService.getJobs({
     page: Number(page),
     limit: Number(limit) as 12 | 16,
     order: order as "newest" | "oldest",
+    location: location as string | null,
+    title: title as string | null,
   });
 
   if (!result.ok) {

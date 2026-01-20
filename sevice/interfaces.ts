@@ -193,9 +193,13 @@ export interface CandidateApplication {
 
 export interface JobApplicatinon {
   id: string;
-  covering_letter: string;
   status: statuses;
   applied_at: Date;
   full_name: string;
-  email: string;
+  user_id: string;
+  experience?: string;
+  education?: string;
+  speciality?: string;
+  // covering_letter: string;
+  // email: string;
 }

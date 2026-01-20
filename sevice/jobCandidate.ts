@@ -5,12 +5,16 @@ interface IGetJobsParams {
   page: number;
   limit: 12 | 16;
   order: "newest" | "oldest";
+  location: string | null;
+  title: string | null;
 }
 
 const getJobs = async ({
   page,
   limit,
   order,
+  location,
+  title,
 }: IGetJobsParams): Promise<CandidateJobRes> => {
   const offset = (page - 1) * limit;
   const orderBy = order === "newest" ? "DESC" : "ASC";
@@ -19,17 +23,16 @@ const getJobs = async ({
 
   const res = await db.query(
     `
-    SELECT *
-    FROM jobs
-    ORDER BY created_at ${orderBy}
-    LIMIT $1 OFFSET $2
-    `,
-    [limit, offset]
+  SELECT *
+  FROM jobs
+  WHERE
+    ($1::text IS NULL OR title ILIKE '%' || $1::text || '%')
+    AND ($2::text IS NULL OR location ILIKE '%' || $2::text || '%')
+  ORDER BY created_at ${orderBy}
+  LIMIT $3 OFFSET $4
+  `,
+    [title, location, limit, offset],
   );
-
-  if (res.rowCount == 0) {
-    return { ok: false, code: 500, message: "Server error!" };
-  }
 
   return {
     ok: true,
