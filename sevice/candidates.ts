@@ -1,21 +1,39 @@
 import db from "../lib/db";
 import {
   Candidates,
+  CandidatesRes,
   IUser,
   UpdateCandidateProfile,
   UpdatePortfolio,
 } from "./interfaces";
 
-const getCandidates = async (): Promise<Candidates> => {
+const getCandidates = async ({
+  // position,
+  // location,
+  // order,
+  search,
+}: {
+  // position: string | null;
+  // location: string | null;
+  // order: "DESC" | "ASC";
+  search: string;
+}): Promise<CandidatesRes> => {
+  // console.log({ search });
+  // const res = await db.query(
+  //   "SELECT id, role, full_name, username, email FROM users WHERE role='candidate'",
+  // );
+
   const res = await db.query(
-    "SELECT id, role, full_name, username, email FROM users WHERE role='candidate'",
+    "SELECT id, role, full_name, email FROM users   JOIN candidate_profiles cp ON id = cp.user_id  WHERE role='candidate' AND ($1::text IS NULL OR cp.speciality ILIKE '%' || $1::text || '%'  OR cp.location ILIKE '%' || $1::text || '%'  );",
+    [search],
   );
 
-  if (res.rowCount == 0) {
-    return { ok: false, code: 404, message: "Candidates not found" };
-  }
+  // if (res.rowCount == 0) {
+  //   return { ok: false, code: 404, message: "Candidates not found" };
+  // }
 
-  return { ok: true, data: res.rows };
+  return res.rows;
+  // return { ok: true, data: res.rows };
 };
 
 const getCandidate = async (id: string): Promise<Candidates> => {

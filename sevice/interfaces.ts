@@ -160,6 +160,8 @@ export type Candidates =
     }
   | ErrorReqResponse;
 
+export type CandidatesRes = IUser | IUser[] | FullDataCandidate;
+
 export interface UpdateCandidateProfile {
   id: string;
   full_name: string;

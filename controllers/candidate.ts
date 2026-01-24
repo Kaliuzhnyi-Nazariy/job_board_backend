@@ -6,21 +6,32 @@ import { CustomRequest } from "../middlewares/interfaces";
 const getCandidates = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
-  const result = await candidateService.getCandidates();
+  const { search } = req.query;
+  // console.log({ search });
+  // console.log(req.query);
+  // const { position, location, order, search } = req.query;
 
-  if (!result.ok) {
-    return next(errorHandler(result.code, result.message));
-  }
+  const result = await candidateService.getCandidates({
+    // position: position as string,
+    // location: location as string,
+    // order: order as "DESC" | "ASC",
+    search: search as string,
+  });
 
-  res.status(200).json(result.data);
+  // if (!result.ok) {
+  //   return next(errorHandler(result.code, result.message));
+  // }
+
+  // res.status(200).json();
+  res.status(200).json(result);
 };
 
 const getCandidate = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { candidateId } = req.params;
   const result = await candidateService.getCandidate(candidateId);
@@ -35,7 +46,7 @@ const getCandidate = async (
 const updateCandidatePersonal = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { userId } = req as unknown as CustomRequest;
   const { full_name, speciality, experience, education, website } = req.body;
@@ -59,7 +70,7 @@ const updateCandidatePersonal = async (
 const updateCandidateProfile = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { userId } = req as unknown as CustomRequest;
   const { biography, date_of_birth, gender, experience, education } = req.body;

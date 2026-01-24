@@ -11,13 +11,13 @@ router.get("/:candidateId", isAuthenticated, candidateCtrl.getCandidate);
 router.patch(
   "/update-personal",
   isAuthenticated,
-  candidateCtrl.updateCandidatePersonal
+  candidateCtrl.updateCandidatePersonal,
 );
 
 router.patch(
   "/update-profile",
   isAuthenticated,
-  candidateCtrl.updateCandidateProfile
+  candidateCtrl.updateCandidateProfile,
 );
 
 export default router;
