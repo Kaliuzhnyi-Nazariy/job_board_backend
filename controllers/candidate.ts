@@ -8,23 +8,13 @@ const getCandidates = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { search } = req.query;
-  // console.log({ search });
-  // console.log(req.query);
-  // const { position, location, order, search } = req.query;
-
+  const { search, location } = req.query;
   const result = await candidateService.getCandidates({
-    // position: position as string,
-    // location: location as string,
+    location: location as string,
     // order: order as "DESC" | "ASC",
     search: search as string,
   });
 
-  // if (!result.ok) {
-  //   return next(errorHandler(result.code, result.message));
-  // }
-
-  // res.status(200).json();
   res.status(200).json(result);
 };
 
