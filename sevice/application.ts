@@ -1,5 +1,9 @@
 import db from "../lib/db";
-import { CandidateApplication, JobApplicatinon } from "./interfaces";
+import {
+  CandidateApplication,
+  CandidateRecentApplications,
+  JobApplicatinon,
+} from "./interfaces";
 
 const apply = async ({
   userId,
@@ -25,10 +29,6 @@ const getCandidatesApplications = async (
   userId: string,
 ): Promise<CandidateApplication[]> => {
   try {
-    // const res = await db.query(
-    //   "SELECT j.id, j.title, j.location, j.salary, j.work_time, ja.status, ja.applied_at, ja.id as ja_id FROM jobs j JOIN job_applications ja ON j.id = ja.job_id WHERE ja.user_id = $1;",
-    //   [userId]
-    // );
     const res = await db.query(
       "SELECT  j.title, j.location, j.salary, j.work_time, ja.status, ja.applied_at, ja.id FROM jobs j JOIN job_applications ja ON j.id = ja.job_id WHERE ja.user_id = $1;",
       [userId],
@@ -63,11 +63,6 @@ const getCandidateApplciationDetails = async ({
 
 const getApplcations = async (jobId: string): Promise<JobApplicatinon[]> => {
   try {
-    // const res = await db.query(
-    //   `SELECT ja.id, ja.covering_letter, ja.status, ja.applied_at, u.full_name, u.email FROM job_applications ja LEFT JOIN users u ON ja.user_id = u.id WHERE ja.job_id = $1;`,
-    //   [jobId]
-    // );
-
     const res = await db.query(
       `SELECT ja.id, ja.status, ja.applied_at, u.full_name, u.id as user_id, ca.experience, ca.education, ca.speciality FROM job_applications ja LEFT JOIN users u ON ja.user_id = u.id LEFT JOIN candidate_profiles ca ON ca.user_id = u.id WHERE ja.job_id = $1;`,
       [jobId],
@@ -119,6 +114,21 @@ const updateApplicationStatus = async ({
   }
 };
 
+const getRecentApplications = async (
+  userId: string,
+): Promise<CandidateRecentApplications[]> => {
+  try {
+    const res = await db.query(
+      "SELECT ja.id, ja.status, ja.applied_at, j.title, j.location, j.work_time, j.salary FROM job_applications ja LEFT JOIN jobs j ON ja.job_id = j.id WHERE user_id = $1 ORDER BY applied_at DESC LIMIT 5;",
+      [userId],
+    );
+
+    return res.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   apply,
   getCandidatesApplications,
@@ -126,4 +136,5 @@ export default {
   getApplcations,
   getApplicationDetails,
   updateApplicationStatus,
+  getRecentApplications,
 };

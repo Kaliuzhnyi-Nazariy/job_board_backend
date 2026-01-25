@@ -205,3 +205,13 @@ export interface JobApplicatinon {
   // covering_letter: string;
   // email: string;
 }
+
+export interface CandidateRecentApplications {
+  id: string;
+  status: statuses;
+  applied_at: Date;
+  title: string;
+  location: string;
+  work_time: workTime;
+  salary: string;
+}

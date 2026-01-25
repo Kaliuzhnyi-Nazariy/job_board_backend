@@ -83,6 +83,14 @@ const updateApplicationStatus = async (
   res.status(200).json();
 };
 
+const getRecentApplications = async (req: Request, res: Response) => {
+  const { userId } = req as unknown as CustomRequest;
+
+  const result = await applicationService.getRecentApplications(userId);
+
+  res.status(200).json(result);
+};
+
 export default {
   apply,
   getCandidateApplications,
@@ -90,4 +98,5 @@ export default {
   getApplications,
   getApplicationDetails,
   updateApplicationStatus,
+  getRecentApplications,
 };

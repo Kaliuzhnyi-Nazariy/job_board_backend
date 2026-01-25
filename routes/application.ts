@@ -32,4 +32,6 @@ router.patch(
   ctrl.updateApplicationStatus,
 );
 
+router.get("/candidate-recent", isAuthenticated, ctrl.getRecentApplications);
+
 export default router;
