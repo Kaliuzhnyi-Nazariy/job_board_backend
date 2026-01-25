@@ -26,7 +26,7 @@ const getJobs = async ({
   SELECT *
   FROM jobs
   WHERE
-    ($1::text IS NULL OR title ILIKE '%' || $1::text || '%')
+    ($1::text IS NULL OR title ILIKE '%' || $1::text || '%' OR position ILIKE '%' || $1::text || '%' OR education ILIKE '%' || $1::text || '%' OR experience ILIKE '%' || $1::text || '%' OR description ILIKE '%' || $1::text || '%' OR responsibilities ILIKE '%' || $1::text || '%')
     AND ($2::text IS NULL OR location ILIKE '%' || $2::text || '%')
   ORDER BY created_at ${orderBy}
   LIMIT $3 OFFSET $4
