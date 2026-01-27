@@ -51,9 +51,9 @@ const getMyJobs = async ({
     ownerId,
   ]);
 
-  if (result.rows.length === 0) {
-    return { ok: false, code: 404, message: "Jobs not found!" };
-  }
+  // if (result.rows.length === 0) {
+  //   return { ok: false, code: 404, message: "Jobs not found!" };
+  // }
 
   return { ok: true, job: result.rows };
 };
