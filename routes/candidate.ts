@@ -20,4 +20,6 @@ router.patch(
   candidateCtrl.updateCandidateProfile,
 );
 
+router.patch("/update-contact", isAuthenticated, candidateCtrl.updateContact);
+
 export default router;

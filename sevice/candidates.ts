@@ -115,4 +115,55 @@ const updateProfile = async ({
   }
 };
 
-export default { getCandidates, getCandidate, updateProfile, updatePersonal };
+const updateContact = async ({
+  id,
+  location,
+  phone,
+  email,
+}: {
+  id: string;
+  location?: string;
+  phone?: string;
+  email?: string;
+}) => {
+  if (!location && !phone && !email) return;
+
+  try {
+    // await db.query(
+    //   `UPDATE candidate_profiles ($1::text IS NULL OR SET ca.location = $1 AND ) ($2::text IS NULL OR SET ca.phone = $2 AND ) ($3::text IS NULL OR SET u.email = $3) JOIN LEFT users u ON ca.user_id = u.id WHERE u.id = $4`,
+    //   [location, phone, email, id],
+    // );
+
+    await db.query(
+      `
+      UPDATE candidate_profiles cp
+SET
+  location = COALESCE($1::text, cp.location),
+  phone    = COALESCE($2::text, cp.phone)
+FROM users u
+WHERE cp.user_id = u.id
+  AND u.id = $3;
+`,
+      [location, phone, id],
+    );
+
+    await db.query(
+      `UPDATE users
+SET email = COALESCE($1::text, email)
+WHERE id = $2;`,
+      [email, id],
+    );
+
+    return;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export default {
+  getCandidates,
+  getCandidate,
+  updateProfile,
+  updatePersonal,
+  updateContact,
+};

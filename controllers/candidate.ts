@@ -81,9 +81,24 @@ const updateCandidateProfile = async (
   res.status(200).json(result);
 };
 
+const updateContact = async (req: Request, res: Response) => {
+  const { location, email, phone } = req.body;
+  const { userId } = req as unknown as CustomRequest;
+
+  const result = await candidateService.updateContact({
+    id: userId,
+    location,
+    email,
+    phone,
+  });
+
+  return res.status(200).json();
+};
+
 export default {
   getCandidates,
   getCandidate,
   updateCandidatePersonal,
   updateCandidateProfile,
+  updateContact,
 };
