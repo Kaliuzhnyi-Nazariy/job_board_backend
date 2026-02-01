@@ -22,4 +22,8 @@ router.post("/auth/reset-password", authCtrl.changePassword);
 
 router.get("/get-me", isAuthenticated, userCtrl.getMe);
 
+router.patch("/change-password", isAuthenticated, userCtrl.changePassword);
+
+router.delete("/delete", isAuthenticated, userCtrl.deleteAccount);
+
 export default router;
