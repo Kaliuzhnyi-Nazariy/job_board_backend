@@ -191,6 +191,8 @@ export interface CandidateApplication {
   applied_at: Date;
 }
 
+export type CandiadteAnswers = { total: number; data: CandidateApplication[] };
+
 // employer
 
 export interface JobApplicatinon {

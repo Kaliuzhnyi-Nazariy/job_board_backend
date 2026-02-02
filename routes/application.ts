@@ -13,6 +13,12 @@ router.get(
 );
 
 router.get(
+  "/candidate-applications/count",
+  isAuthenticated,
+  ctrl.getCandidateAppliedApplications,
+);
+
+router.get(
   "/candidate-applications/:jobApplicationId",
   isAuthenticated,
   ctrl.getCandidateApplciationDetails,

@@ -1,5 +1,6 @@
 import db from "../lib/db";
 import {
+  CandiadteAnswers,
   CandidateApplication,
   CandidateRecentApplications,
   JobApplicatinon,
@@ -25,13 +26,32 @@ const apply = async ({
   }
 };
 
-const getCandidatesApplications = async (
+const getCountOfApliedApplications = async (
   userId: string,
-): Promise<CandidateApplication[]> => {
+): Promise<{ count: number }> => {
+  const { rows } = await db.query(
+    "SELECT COUNT(*) FROM job_applications WHERE user_id=$1",
+    [userId],
+  );
+
+  const count = Number(rows[0]?.count ?? 0);
+
+  return { count };
+};
+
+const getCandidatesApplications = async ({
+  userId,
+  page,
+}: {
+  userId: string;
+  page: number;
+}): Promise<CandidateApplication[]> => {
   try {
+    const offset = (page && page - 1) * 8;
+
     const res = await db.query(
-      "SELECT  j.title, j.location, j.salary, j.work_time, ja.status, ja.applied_at, ja.id FROM jobs j JOIN job_applications ja ON j.id = ja.job_id WHERE ja.user_id = $1;",
-      [userId],
+      "SELECT  j.title, j.location, j.salary, j.work_time, ja.status, ja.applied_at, ja.id FROM jobs j JOIN job_applications ja ON j.id = ja.job_id WHERE ja.user_id = $1 LIMIT 8 OFFSET $2;",
+      [userId, offset],
     );
 
     return res.rows;
@@ -131,6 +151,7 @@ const getRecentApplications = async (
 
 export default {
   apply,
+  getCountOfApliedApplications,
   getCandidatesApplications,
   getCandidateApplciationDetails,
   getApplcations,

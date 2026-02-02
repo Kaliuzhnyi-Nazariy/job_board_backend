@@ -16,10 +16,22 @@ const apply = async (req: Request, res: Response, next: NextFunction) => {
   return res.status(201).json();
 };
 
-const getCandidateApplications = async (req: Request, res: Response) => {
+const getCandidateAppliedApplications = async (req: Request, res: Response) => {
   const { userId } = req as unknown as CustomRequest;
 
-  const result = await applicationService.getCandidatesApplications(userId);
+  const result = await applicationService.getCountOfApliedApplications(userId);
+
+  return res.status(200).json(result);
+};
+
+const getCandidateApplications = async (req: Request, res: Response) => {
+  const { userId } = req as unknown as CustomRequest;
+  const { page } = req.query;
+
+  const result = await applicationService.getCandidatesApplications({
+    userId,
+    page: Number(page),
+  });
 
   return res.status(200).json(result);
 };
@@ -93,6 +105,7 @@ const getRecentApplications = async (req: Request, res: Response) => {
 
 export default {
   apply,
+  getCandidateAppliedApplications,
   getCandidateApplications,
   getCandidateApplciationDetails,
   getApplications,
