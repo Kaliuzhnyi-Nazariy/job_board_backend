@@ -50,7 +50,7 @@ const getCandidatesApplications = async ({
     const offset = (page && page - 1) * 8;
 
     const res = await db.query(
-      "SELECT  j.title, j.location, j.salary, j.work_time, ja.status, ja.applied_at, ja.id FROM jobs j JOIN job_applications ja ON j.id = ja.job_id WHERE ja.user_id = $1 LIMIT 8 OFFSET $2;",
+      "SELECT  j.title, j.location, j.salary, j.work_time, ja.status, ja.applied_at, ja.id FROM jobs j JOIN job_applications ja ON j.id = ja.job_id WHERE ja.user_id = $1 ORDER BY applied_at DESC LIMIT 8 OFFSET $2 ;",
       [userId, offset],
     );
 
