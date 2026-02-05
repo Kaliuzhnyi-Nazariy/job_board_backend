@@ -7,6 +7,12 @@ const apply = async (req: Request, res: Response, next: NextFunction) => {
   const { jobId } = req.params;
   const { coveringLetter } = req.body;
 
+if (!userId) {
+next(errorHandler(400, "user ID is obvious!"))
+}
+
+if (!jobId) {next(errorHandler(400, "jobId is required!"))}
+
   await applicationService.apply({
     userId,
     coveringLetter,
