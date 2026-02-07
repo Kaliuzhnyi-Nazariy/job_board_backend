@@ -11,23 +11,11 @@ const applyToJob = async (req: Request, res: Response, next: NextFunction) => {
   const { coveringLetter } = req.body;
 
   if (!userId) {
-    return next(errorHandler(401));
+    return next(errorHandler(400, "user ID is required"));
   }
 
   if (!jobId) {
     return next(errorHandler(400, "job id is required"));
-  }
-
-  if (
-    coveringLetter &&
-    (typeof coveringLetter !== "string" || coveringLetter.length > 512)
-  ) {
-    return next(
-      errorHandler(
-        400,
-        "Covering letter must be a string with a maximum length of 512 characters",
-      ),
-    );
   }
 
   try {
@@ -36,6 +24,7 @@ const applyToJob = async (req: Request, res: Response, next: NextFunction) => {
       coveringLetter,
       jobId,
     });
+
     return res.status(201).json();
   } catch (error) {
     next(error);
