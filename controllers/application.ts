@@ -1,67 +1,143 @@
 import { NextFunction, Request, Response } from "express";
 import { CustomRequest } from "../middlewares/interfaces";
 import applicationService from "../sevice/application";
+import { errorHandler } from "../helper/errorHandler";
 
-const apply = async (req: Request, res: Response, next: NextFunction) => {
+// candidate
+
+const applyToJob = async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req as unknown as CustomRequest;
   const { jobId } = req.params;
   const { coveringLetter } = req.body;
 
-  await applicationService.apply({
-    userId,
-    coveringLetter,
-    jobId,
-  });
+  if (!userId) {
+    return next(errorHandler(401));
+  }
 
-  return res.status(201).json();
+  if (!jobId) {
+    return next(errorHandler(400, "job id is required"));
+  }
+
+  if (
+    coveringLetter &&
+    (typeof coveringLetter !== "string" || coveringLetter.length > 512)
+  ) {
+    return next(
+      errorHandler(
+        400,
+        "Covering letter must be a string with a maximum length of 512 characters",
+      ),
+    );
+  }
+
+  try {
+    await applicationService.applyToJob({
+      userId,
+      coveringLetter,
+      jobId,
+    });
+    return res.status(201).json();
+  } catch (error) {
+    next(error);
+  }
 };
 
-const getCandidateAppliedApplications = async (req: Request, res: Response) => {
+const getMyApplicationsCount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { userId } = req as unknown as CustomRequest;
 
-  const result = await applicationService.getCountOfApliedApplications(userId);
+  if (!userId) {
+    return next(errorHandler(401));
+  }
 
-  return res.status(200).json(result);
+  try {
+    const result = await applicationService.getMyApplicationsCount(userId);
+
+    return res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
-const getCandidateApplications = async (req: Request, res: Response) => {
+const getMyApplications = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { userId } = req as unknown as CustomRequest;
   const { page } = req.query;
 
-  const result = await applicationService.getCandidatesApplications({
-    userId,
-    page: Number(page),
-  });
+  if (!userId) {
+    return next(errorHandler(401));
+  }
 
-  return res.status(200).json(result);
+  if (!page) {
+    return next(errorHandler(400, "Page is required"));
+  }
+
+  try {
+    const result = await applicationService.getMyApplications({
+      userId,
+      page: Number(page),
+    });
+
+    return res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
-const getCandidateApplciationDetails = async (
+const getMyApplicationById = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   const { userId } = req as unknown as CustomRequest;
   const { jobApplicationId } = req.params;
-  const result = await applicationService.getCandidateApplciationDetails({
-    userId,
-    jobApplicationId,
-  });
 
-  res.status(200).json(result);
+  if (!userId) {
+    return next(errorHandler(401));
+  }
+
+  if (!jobApplicationId) {
+    return next(errorHandler(400, "Job application is required"));
+  }
+
+  try {
+    const result = await applicationService.getMyApplicationById({
+      userId,
+      jobApplicationId,
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
-const getApplications = async (
+// employer
+
+const getApplicationsByJobId = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  // const { userId } = req as unknown as CustomRequest;
   const { jobId } = req.params;
 
-  const result = await applicationService.getApplcations(jobId);
+  if (!jobId) {
+    return next(errorHandler(400, "Job id is required"));
+  }
 
-  res.status(200).json(result);
+  try {
+    const result = await applicationService.getApplcationsByJobId(jobId);
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const getApplicationDetails = async (
@@ -71,12 +147,24 @@ const getApplicationDetails = async (
 ) => {
   const { jobId, applicationId } = req.params;
 
-  const result = await applicationService.getApplicationDetails({
-    jobId,
-    applicationId,
-  });
+  if (!jobId) {
+    return next(errorHandler(400, "Job Id is required"));
+  }
 
-  res.status(200).json(result);
+  if (!applicationId) {
+    return next(errorHandler(400, "Application id is required"));
+  }
+
+  try {
+    const result = await applicationService.getApplicationDetails({
+      jobId,
+      applicationId,
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const updateApplicationStatus = async (
@@ -87,29 +175,53 @@ const updateApplicationStatus = async (
   const { jobApplicationId } = req.params;
   const { status } = req.body;
 
-  await applicationService.updateApplicationStatus({
-    status,
-    jobApplicationId,
-  });
+  if (!jobApplicationId) {
+    return next(errorHandler(400, "Job application id is required"));
+  }
 
-  res.status(200).json();
+  if (!status) {
+    return next(errorHandler(400, "Status is required"));
+  }
+
+  try {
+    await applicationService.updateApplicationStatus({
+      status,
+      jobApplicationId,
+    });
+
+    res.status(200).json();
+  } catch (error) {
+    next(error);
+  }
 };
 
-const getRecentApplications = async (req: Request, res: Response) => {
+const getMyRecentApplications = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { userId } = req as unknown as CustomRequest;
 
-  const result = await applicationService.getRecentApplications(userId);
+  if (!userId) {
+    return next(errorHandler(401));
+  }
 
-  res.status(200).json(result);
+  try {
+    const result = await applicationService.getMyRecentApplications(userId);
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export default {
-  apply,
-  getCandidateAppliedApplications,
-  getCandidateApplications,
-  getCandidateApplciationDetails,
-  getApplications,
+  applyToJob,
+  getMyApplicationsCount,
+  getMyApplications,
+  getMyApplicationById,
+  getApplicationsByJobId,
   getApplicationDetails,
   updateApplicationStatus,
-  getRecentApplications,
+  getMyRecentApplications,
 };

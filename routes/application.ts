@@ -4,27 +4,21 @@ import ctrl from "../controllers/application";
 
 const router = Router();
 
-router.post("/:jobId", isAuthenticated, ctrl.apply);
+//candidate
 
-router.get(
-  "/candidate-applications",
-  isAuthenticated,
-  ctrl.getCandidateApplications,
-);
+router.post("/:jobId", isAuthenticated, ctrl.applyToJob);
 
-router.get(
-  "/candidate-applications/count",
-  isAuthenticated,
-  ctrl.getCandidateAppliedApplications,
-);
+router.get("/my", isAuthenticated, ctrl.getMyApplications);
 
-router.get(
-  "/candidate-applications/:jobApplicationId",
-  isAuthenticated,
-  ctrl.getCandidateApplciationDetails,
-);
+router.get("/my/count", isAuthenticated, ctrl.getMyApplicationsCount);
 
-router.get("/get-applications/:jobId", isAuthenticated, ctrl.getApplications);
+router.get("/my/:jobApplicationId", isAuthenticated, ctrl.getMyApplicationById);
+
+router.get("/my/recent", isAuthenticated, ctrl.getMyRecentApplications);
+
+// employer
+
+router.get("/:jobId", isAuthenticated, ctrl.getApplicationsByJobId);
 
 router.get(
   "/:jobId/candidate-details/:applicationId",
@@ -33,11 +27,9 @@ router.get(
 );
 
 router.patch(
-  "/update-candidate-status/:jobApplicationId",
+  "/:jobApplicationId/status",
   isAuthenticated,
   ctrl.updateApplicationStatus,
 );
-
-router.get("/candidate-recent", isAuthenticated, ctrl.getRecentApplications);
 
 export default router;
