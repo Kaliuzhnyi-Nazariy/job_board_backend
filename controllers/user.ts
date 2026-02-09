@@ -13,13 +13,23 @@ return next(errorHandler(401, "user not found"))
 }
 
 
-  const result = await userService.getMe(userId);
+//  const result = await 
+//userService.getMe(userId);
 
-  if (!result.ok) {
-    return next(errorHandler(result.code, result.message));
-  }
+//  if (!result.ok) {
+//    return next(errorHandler(result.code, result.message));
+//  }
+//
+//  res.status(200).json(result);
 
-  res.status(200).json(result);
+try {
+const user = await UserService.getMe(userId)
+
+return res.status(200).json(user)
+
+} catch (error) {
+next(error}
+
 };
 
 const changePassword = async (req: Request, res: Response, next: NextFunction) => {
@@ -42,7 +52,7 @@ if(!userId) {
 return next(errorHandler(401, "user is not found"))
 }
 
-
+try {
   await userService.changePassword(
     oldPassword,
     newPassword,
@@ -50,7 +60,10 @@ return next(errorHandler(401, "user is not found"))
     userId,
   );
 
-  res.status(200).json();
+  res.status(204).json();
+} catch (error){
+next(error)
+}
 };
 
 const deleteAccount = async (req: Request, res: Response, next: NextFunction) => {
@@ -60,11 +73,15 @@ if(!userId) {
 return next(errorHandler(401, "user is not found"))
 }
 
+try {
   await userService.deleteAccount(userId);
 
   res.clearCookie("token", helper.cookieSettings);
 
   res.status(204).json();
+} catch (error) {
+next(error)
+}
 };
 
 export default { getMe, changePassword, deleteAccount };
