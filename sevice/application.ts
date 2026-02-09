@@ -74,7 +74,7 @@ const getApplcationsByJobId = async (
   jobId: string,
 ): Promise<JobApplicatinon[]> => {
   const res = await db.query(
-    `SELECT ja.id, ja.status, ja.applied_at, u.full_name, u.id as user_id, ca.experience, ca.education, ca.speciality FROM job_applications ja LEFT JOIN users u ON ja.user_id = u.id LEFT JOIN candidate_profiles ca ON ca.user_id = u.id WHERE ja.job_id = $1;`,
+    `SELECT ja.id, ja.status, ja.applied_at, u.full_name, u.id as user_id, ca.experience, ca.education, ca.speciality FROM job_applications ja LEFT JOIN users u ON ja.user_id = u.id LEFT JOIN candidate_profiles ca ON ca.user_id = u.id WHERE ja.job_id = $1 ORDER BY ja.applied_at DESC;`,
     [jobId],
   );
 
