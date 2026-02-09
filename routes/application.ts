@@ -12,9 +12,9 @@ router.get("/my", isAuthenticated, ctrl.getMyApplications);
 
 router.get("/my/count", isAuthenticated, ctrl.getMyApplicationsCount);
 
-router.get("/my/:jobApplicationId", isAuthenticated, ctrl.getMyApplicationById);
-
 router.get("/my/recent", isAuthenticated, ctrl.getMyRecentApplications);
+
+router.get("/my/:jobApplicationId", isAuthenticated, ctrl.getMyApplicationById);
 
 // employer
 
