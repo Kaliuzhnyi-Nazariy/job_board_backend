@@ -1,5 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { IResponse, ISignUp, ISignIn } from "../sevice/interfaces";
+import {
+  ISignUp,
+  ISignIn,
+  ISingnInResponse,
+  ISendEmailResponse,
+} from "../sevice/interfaces";
 
 import authService from "../sevice/auth";
 import { errorHandler } from "../helper/errorHandler";
@@ -7,93 +12,117 @@ import helper from "../helper";
 
 const signup = async (
   req: Request<{}, {}, ISignUp>,
-  res: Response<IResponse>,
-  next: NextFunction
+  res: Response,
+  next: NextFunction,
 ) => {
   const { role, fullName, username, email, password, confirmPassword } =
     req.body;
 
-  const result = await authService.signup({
-    role,
-    fullName,
-    username,
-    email,
-    password,
-    confirmPassword,
-  });
-
-  if (!result.ok) {
-    return next(errorHandler(result.code, result.message));
+  if (
+    !role ||
+    !fullName ||
+    !username ||
+    !email ||
+    !password ||
+    !confirmPassword
+  ) {
+    return next(errorHandler(400, "Missing required fields"));
   }
 
-  res.cookie("token", result.payload, helper.cookieSettings);
+  try {
+    const result = await authService.signup({
+      role,
+      fullName,
+      username,
+      email,
+      password,
+      confirmPassword,
+    });
 
-  res.status(201).json({
-    ok: result.ok,
-  });
+    res.cookie("token", result.payload, helper.cookieSettings);
+
+    res.sendStatus(201);
+  } catch (error) {
+    next(error);
+  }
 };
+
+// ============================================ //
 
 const signin = async (
   req: Request<{}, {}, ISignIn>,
-  res: Response<IResponse>,
-  next: NextFunction
+  res: Response<ISingnInResponse>,
+  next: NextFunction,
 ) => {
   const { email, password } = req.body;
 
-  const result = await authService.signin({ email, password });
+  if (!email || !password)
+    return next(errorHandler(400, "Missing required field"));
 
-  if (!result.ok) {
-    return next(errorHandler(result.code, result.message));
+  try {
+    const { data, role } = await authService.signin({ email, password });
+
+    res.cookie("token", data, helper.cookieSettings);
+
+    res.status(200).json({ role });
+  } catch (error) {
+    next(error);
   }
-
-  res.cookie("token", result.payload.token, helper.cookieSettings);
-
-  res.status(200).json({ ok: result.ok, data: result.payload.role });
 };
+
+// ======================================== //
 
 const logout = async (req: Request, res: Response, next: NextFunction) => {
   res.clearCookie("token", helper.cookieSettings);
-  res.status(200).json({ ok: true });
+  res.sendStatus(204);
 };
 
 const sendEmailForResetPassword = async (
   req: Request,
-  res: Response<IResponse>,
-  next: NextFunction
+  res: Response<ISendEmailResponse>,
+  next: NextFunction,
 ) => {
   const { email } = req.body;
 
-  const result = await authService.sendEmail(email);
-
-  if (!result.ok) {
-    return next(errorHandler(result.code, result.message));
+  if (!email) {
+    return next(errorHandler(400, "Missing required field"));
   }
 
-  if (result && !result.payload) {
-    return next(errorHandler(500));
-  }
+  try {
+    const { token } = await authService.sendEmail(email);
 
-  res.status(200).json({ ok: true, data: result.payload });
+    res.status(200).json({ token });
+  } catch (error) {
+    next(error);
+  }
 };
 
 const changePassword = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { password, confirmPassword, token } = req.body;
 
-  const result = await authService.changePassword({
-    password,
-    confirmPassword,
-    token,
-  });
-
-  if (!result.ok) {
-    return next(errorHandler(result.code, result.message));
+  if (!password || !confirmPassword || !token) {
+    return next(errorHandler(400, "Missing required fields"));
   }
 
-  res.status(200).json({ ok: true });
+  if (password !== confirmPassword) {
+    return next(errorHandler(400, "Invalid credentials"));
+  }
+
+  try {
+    await authService.changePassword({
+      password,
+      confirmPassword,
+      token,
+    });
+
+    res.sendStatus(200);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export default {
