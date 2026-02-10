@@ -1,8 +1,8 @@
+import { errorHandler } from "../helper/errorHandler";
 import db from "../lib/db";
 import {
   EmployerJobRes,
   EmployerRecentJobsRes,
-  IJobData,
   PostJob,
   UpdateJob,
 } from "./interfaces";
@@ -36,29 +36,44 @@ const postJob = async ({
   );
 
   if (newJob.rows.length == 0) {
-    return { ok: false, code: 400, message: "Something went wrong!" };
+    throw errorHandler(400, "Something went wrong");
   }
 
-  return { ok: true, job: newJob.rows[0] };
+  return { job: newJob.rows[0] };
 };
 
 const getMyJobs = async ({
   ownerId,
+  page,
 }: {
   ownerId: string;
+  page: number;
 }): Promise<EmployerJobRes> => {
-  const result = await db.query(`SELECT * FROM jobs WHERE owner_id=$1`, [
-    ownerId,
-  ]);
+  const LIMIT = 6;
 
-  // if (result.rows.length === 0) {
-  //   return { ok: false, code: 404, message: "Jobs not found!" };
-  // }
+  const offset = (page - 1) * LIMIT;
 
-  return { ok: true, job: result.rows };
+  const result = await db.query(
+    `SELECT j.id, j.title, j.work_time, j.created_at, COUNT(ja.id) as applications_count FROM jobs j LEFT JOIN job_applications ja ON j.id = ja.job_id WHERE owner_id=$1 GROUP BY
+  j.id,
+  j.title,
+  j.work_time,
+  j.created_at LIMIT ${LIMIT} OFFSET $2`,
+    [ownerId, offset],
+  );
+
+  const myJobsCount = await db.query(
+    "SELECT COUNT(*) FROM jobs WHERE owner_id=$1",
+    [ownerId],
+  );
+
+  return {
+    job: result.rows,
+    meta: { allAmountOfJobs: Number(myJobsCount.rows[0].count), limit: LIMIT },
+  };
 };
 
-const getMyJob = async ({
+const getMyJobById = async ({
   ownerId,
   jobId,
 }: {
@@ -71,10 +86,10 @@ const getMyJob = async ({
   );
 
   if (result.rows.length === 0) {
-    return { ok: false, code: 404, message: "Job not found!" };
+    throw errorHandler(404, "Job not found");
   }
 
-  return { ok: true, job: result.rows[0] };
+  return { job: result.rows[0] };
 };
 
 const updateJob = async ({
@@ -106,10 +121,10 @@ const updateJob = async ({
   );
 
   if (res.rows.length == 0) {
-    return { ok: false, code: 400 };
+    throw errorHandler(500, "Some error occured on server");
   }
 
-  return { ok: true, job: res.rows[0] };
+  return { job: res.rows[0] };
 };
 
 const deleteJob = async ({
@@ -125,18 +140,17 @@ const deleteJob = async ({
   );
 
   if (res.rows.length == 0) {
-    return { ok: false, code: 404 };
+    throw errorHandler(404, "Job not found");
   }
 
-  return { ok: true, job: res.rows[0] };
+  return { job: res.rows[0] };
 };
 
-const getRecentJobs = async (
+const getFiveRecentJobs = async (
   userId: string,
 ): Promise<EmployerRecentJobsRes> => {
-  try {
-    const res = await db.query(
-      `
+  const res = await db.query(
+    `
       SELECT
     j.id,
     j.title,
@@ -157,20 +171,17 @@ const getRecentJobs = async (
   ORDER BY j.created_at DESC
   LIMIT 5;
   `,
-      [userId],
-    );
+    [userId],
+  );
 
-    return { ok: true, data: res.rows };
-  } catch (error) {
-    throw error;
-  }
+  return { data: res.rows };
 };
 
 export default {
   postJob,
   getMyJobs,
-  getMyJob,
+  getMyJobById,
   updateJob,
   deleteJob,
-  getRecentJobs,
+  getFiveRecentJobs,
 };

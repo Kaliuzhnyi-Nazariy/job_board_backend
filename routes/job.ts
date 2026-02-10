@@ -8,9 +8,15 @@ router.post("/post", isAuthenticated, jobController.postJob);
 
 router.get("/my-jobs", isAuthenticated, jobController.getMyJobs);
 
-router.get("/my-jobs/recent", isAuthenticated, jobController.getRecentJobs);
+router.get(
+  "/my-jobs/five-recent",
+  isAuthenticated,
+  jobController.getFiveRecentJobs,
+);
 
-router.get("/my-jobs/:jobId", isAuthenticated, jobController.getMyJob);
+// router.get("/my-jobs/recent", isAuthenticated, jobController.getRecentJobs);
+
+router.get("/my-jobs/:jobId", isAuthenticated, jobController.getMyJobById);
 
 router.put("/update/:jobId", isAuthenticated, jobController.updateJob);
 
@@ -20,6 +26,6 @@ router.delete("/delete/:jobId", isAuthenticated, jobController.deleteJob);
 
 router.get("/jobs", isAuthenticated, jobController.getJobs);
 
-router.get("/jobs/:jobId", isAuthenticated, jobController.getJob);
+router.get("/jobs/:jobId", isAuthenticated, jobController.getJobById);
 
 export default router;

@@ -6,6 +6,8 @@ import candidateService from "../sevice/jobCandidate";
 
 import { errorHandler } from "../helper/errorHandler";
 
+// employer
+
 const postJob = async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req as unknown as CustomRequest;
   const {
@@ -20,51 +22,72 @@ const postJob = async (req: Request, res: Response, next: NextFunction) => {
     description,
   } = req.body;
 
-  const response = await employerService.postJob({
-    title,
-    position,
-    location,
-    salary,
-    workTime,
-    description,
-    owner: userId,
-    responsibilities,
-    education,
-    experience,
-  });
+  try {
+    const response = await employerService.postJob({
+      title,
+      position,
+      location,
+      salary,
+      workTime,
+      description,
+      owner: userId,
+      responsibilities,
+      education,
+      experience,
+    });
 
-  if (!response.ok) {
-    return next(errorHandler(response.code, response.message));
+    res.status(201).json(response);
+  } catch (error) {
+    next(error);
   }
-
-  if (response && !response.job) {
-    return next(errorHandler(500));
-  }
-
-  res.status(201).json(response);
 };
 
 const getMyJobs = async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req as unknown as CustomRequest;
-  const result = await employerService.getMyJobs({ ownerId: userId });
+  const { page } = req.query;
 
-  if (!result.ok) {
-    return next(errorHandler(result.code, result.message));
+  if (!userId) {
+    return next(errorHandler(400, "userid is required"));
   }
 
-  res.status(200).json(result);
+  if (!page) {
+    return next(errorHandler(400, "Page is required"));
+  }
+
+  try {
+    const result = await employerService.getMyJobs({
+      ownerId: userId,
+      page: Number(page) as number,
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
-const getMyJob = async (req: Request, res: Response, next: NextFunction) => {
+const getMyJobById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { userId } = req as unknown as CustomRequest;
   const { jobId } = req.params;
-  const result = await employerService.getMyJob({ ownerId: userId, jobId });
 
-  if (!result.ok) {
-    return next(errorHandler(result.code, result.message));
+  if (!jobId) {
+    return next(errorHandler(400, "Job id is required"));
   }
 
-  res.status(200).json(result);
+  try {
+    const result = await employerService.getMyJobById({
+      ownerId: userId,
+      jobId,
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const updateJob = async (req: Request, res: Response, next: NextFunction) => {
@@ -81,91 +104,111 @@ const updateJob = async (req: Request, res: Response, next: NextFunction) => {
     responsibilities,
   } = req.body;
 
-  const result = await employerService.updateJob({
-    title,
-    position,
-    location,
-    salary,
-    workTime,
-    description,
-    jobId,
-    education,
-    experience,
-    responsibilities,
-  });
-
-  if (!result.ok) {
-    return next(errorHandler(result.code, result.message));
+  if (!jobId) {
+    return next(errorHandler(400, "Job id is required"));
   }
 
-  res.status(200).json(result);
+  try {
+    const result = await employerService.updateJob({
+      title,
+      position,
+      location,
+      salary,
+      workTime,
+      description,
+      jobId,
+      education,
+      experience,
+      responsibilities,
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const deleteJob = async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req as unknown as CustomRequest;
   const { jobId } = req.params;
-  const result = await employerService.deleteJob({ jobId, userId });
 
-  if (!result.ok) {
-    return next(errorHandler(result.code, result.message));
+  if (!jobId) {
+    return next(errorHandler(400, "Job id is required"));
   }
 
-  res.status(200).json(result);
-};
+  try {
+    const result = await employerService.deleteJob({ jobId, userId });
 
-const getJobs = async (req: Request, res: Response, next: NextFunction) => {
-  // console.log(req.params);
-  const { page, limit, order, location, title } = req.query;
-
-  const result = await candidateService.getJobs({
-    page: Number(page),
-    limit: Number(limit) as 12 | 16,
-    order: order as "newest" | "oldest",
-    location: location as string | null,
-    title: title as string | null,
-  });
-
-  if (!result.ok) {
-    return next(errorHandler(result.code));
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
   }
-
-  res.status(200).json(result.data);
 };
 
-const getJob = async (req: Request, res: Response, next: NextFunction) => {
-  const { jobId } = req.params;
-
-  const result = await candidateService.getJob(jobId);
-
-  if (!result.ok) {
-    return next(errorHandler(result.code));
-  }
-
-  res.status(200).json(result.data);
-};
-
-const getRecentJobs = async (
+const getFiveRecentJobs = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   const { userId } = req as unknown as CustomRequest;
-  const result = await employerService.getRecentJobs(userId);
 
-  if (!result.ok) {
-    return next(errorHandler(500));
+  try {
+    const result = await employerService.getFiveRecentJobs(userId);
+
+    res.status(200).json(result.data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// candidate
+
+const getJobs = async (req: Request, res: Response, next: NextFunction) => {
+  // console.log(req.params);
+  const { page, limit, order, location, title } = req.query;
+
+  if (!page || !limit) {
+    return next(errorHandler(400, "page and limit are required"));
   }
 
-  res.status(200).json(result.data);
+  try {
+    const result = await candidateService.getJobs({
+      page: Number(page),
+      limit: Number(limit) as 12 | 16,
+      order: order as "newest" | "oldest",
+      location: location as string | null,
+      title: title as string | null,
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getJobById = async (req: Request, res: Response, next: NextFunction) => {
+  const { jobId } = req.params;
+
+  if (!jobId) {
+    return next(errorHandler(400, "Job id is required"));
+  }
+
+  try {
+    const result = await candidateService.getJobById(jobId);
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export default {
   postJob,
   getMyJobs,
-  getMyJob,
+  getMyJobById,
   updateJob,
   deleteJob,
+  getFiveRecentJobs,
   getJobs,
-  getJob,
-  getRecentJobs,
+  getJobById,
 };
