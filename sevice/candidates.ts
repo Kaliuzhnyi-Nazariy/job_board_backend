@@ -1,5 +1,7 @@
+import { errorHandler } from "../helper/errorHandler";
 import db from "../lib/db";
 import {
+  CandidateResData,
   Candidates,
   CandidatesRes,
   IUser,
@@ -9,20 +11,45 @@ import {
 
 const getCandidates = async ({
   location,
-  // order,
+  order,
   search,
+  limit,
 }: {
   location: string | null;
-  // order: "DESC" | "ASC";
+  order: "DESC" | "ASC";
   search: string;
-}): Promise<CandidatesRes> => {
+  limit: number;
+}): Promise<CandidateResData> => {
+  const resTotal = await db.query(`SELECT COUNT(*) FROM candidate_profiles; `);
+
   const res = await db.query(
-    "SELECT id, role, full_name, email FROM users   JOIN candidate_profiles cp ON id = cp.user_id  WHERE role='candidate' AND ($1::text IS NULL OR cp.speciality ILIKE '%' || $1::text || '%'  OR full_name ILIKE '%' || $1::text || '%' OR cp.experience ILIKE '%' || $1::text || '%' OR cp.education ILIKE '%' || $1::text  || '%' ) AND ($2::text IS NULL OR cp.location ILIKE '%' || $2::text || '%');",
+    `
+    SELECT
+  u.id,
+  u.role,
+  u.full_name,
+  u.email,
+  cp.location,
+  cp.experience
+FROM users u
+LEFT JOIN candidate_profiles cp ON u.id = cp.user_id
+WHERE
+  u.role = 'candidate'
+  AND (
+    $1::text IS NULL OR
+    COALESCE(cp.speciality, '') ILIKE '%' || $1 || '%' OR
+    COALESCE(u.full_name, '') ILIKE '%' || $1 || '%' OR
+    COALESCE(cp.experience, '') ILIKE '%' || $1 || '%' OR
+    COALESCE(cp.education, '') ILIKE '%' || $1 || '%'
+  )
+  AND (
+    $2::text IS NULL OR
+    COALESCE(cp.location, '') ILIKE '%' || $2 || '%'
+  ) ORDER BY cp.created_at ${order} ;`,
     [search, location],
   );
 
-  return res.rows;
-  // return { ok: true, data: res.rows };
+  return { data: res.rows, meta: { total: resTotal.rows[0].count, limit } };
 };
 
 const getCandidate = async (id: string): Promise<Candidates> => {
@@ -53,17 +80,15 @@ WHERE u.id = $1;`,
   );
 
   if (res.rowCount == 0) {
-    return { ok: false, code: 404, message: "Candidate not found!" };
+    throw errorHandler(404, "Candidate not found");
   }
 
-  return { ok: true, data: res.rows[0] };
+  return { data: res.rows[0] };
 };
 
 // make amultiple updates, for personal and candidates profile data, also split candidate upd request
 
-const updatePersonal = async (
-  data: UpdateCandidateProfile,
-): Promise<Candidates> => {
+const updatePersonal = async (data: UpdateCandidateProfile) => {
   // console.log({ data });
 
   await db.query("BEGIN");
@@ -88,7 +113,6 @@ const updatePersonal = async (
     );
 
     await db.query("COMMIT");
-    return { ok: true };
   } catch (err) {
     await db.query("ROLLBACK");
     throw err;
@@ -102,17 +126,11 @@ const updateProfile = async ({
   experience,
   education,
   id,
-}: UpdatePortfolio): Promise<Candidates> => {
-  try {
-    await db.query(
-      `UPDATE candidate_profiles SET biography=$1, date_of_birth=$2, gender=$3, experience=$4, education=$5 WHERE user_id=$6`,
-      [biography, date_of_birth, gender, experience, education, id],
-    );
-
-    return { ok: true };
-  } catch (error) {
-    throw error;
-  }
+}: UpdatePortfolio) => {
+  await db.query(
+    `UPDATE candidate_profiles SET biography=$1, date_of_birth=$2, gender=$3, experience=$4, education=$5 WHERE user_id=$6`,
+    [biography, date_of_birth, gender, experience, education, id],
+  );
 };
 
 const updateContact = async ({
@@ -128,14 +146,8 @@ const updateContact = async ({
 }) => {
   if (!location && !phone && !email) return;
 
-  try {
-    // await db.query(
-    //   `UPDATE candidate_profiles ($1::text IS NULL OR SET ca.location = $1 AND ) ($2::text IS NULL OR SET ca.phone = $2 AND ) ($3::text IS NULL OR SET u.email = $3) JOIN LEFT users u ON ca.user_id = u.id WHERE u.id = $4`,
-    //   [location, phone, email, id],
-    // );
-
-    await db.query(
-      `
+  await db.query(
+    `
       UPDATE candidate_profiles cp
 SET
   location = COALESCE($1::text, cp.location),
@@ -144,20 +156,17 @@ FROM users u
 WHERE cp.user_id = u.id
   AND u.id = $3;
 `,
-      [location, phone, id],
-    );
+    [location, phone, id],
+  );
 
-    await db.query(
-      `UPDATE users
+  await db.query(
+    `UPDATE users
 SET email = COALESCE($1::text, email)
 WHERE id = $2;`,
-      [email, id],
-    );
+    [email, id],
+  );
 
-    return;
-  } catch (error) {
-    throw error;
-  }
+  return;
 };
 
 export default {

@@ -8,14 +8,24 @@ const getCandidates = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { search, location } = req.query;
-  const result = await candidateService.getCandidates({
-    location: location as string,
-    // order: order as "DESC" | "ASC",
-    search: search as string,
-  });
+  const { search, location, order, limit } = req.query;
 
-  res.status(200).json(result);
+  if (!order || !limit) {
+    return next(errorHandler(400, "Missing required fields"));
+  }
+
+  try {
+    const result = await candidateService.getCandidates({
+      location: location as string,
+      order: order as "DESC" | "ASC",
+      search: search as string,
+      limit: Number(limit) as number,
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const getCandidate = async (
@@ -24,13 +34,18 @@ const getCandidate = async (
   next: NextFunction,
 ) => {
   const { candidateId } = req.params;
-  const result = await candidateService.getCandidate(candidateId);
 
-  if (!result.ok) {
-    return next(errorHandler(result.code, result.message));
+  if (!candidateId) {
+    return next(errorHandler(400, "Candidate id is required"));
   }
 
-  res.status(200).json(result);
+  try {
+    const result = await candidateService.getCandidate(candidateId);
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const updateCandidatePersonal = async (
@@ -41,20 +56,24 @@ const updateCandidatePersonal = async (
   const { userId } = req as unknown as CustomRequest;
   const { full_name, speciality, experience, education, website } = req.body;
 
-  const result = await candidateService.updatePersonal({
-    full_name,
-    speciality,
-    experience,
-    education,
-    website,
-    id: userId,
-  });
-
-  if (!result.ok) {
-    return next(errorHandler(result.code, result.message));
+  if (!full_name || !speciality || !experience || !education || !website) {
+    return next(errorHandler(400, "Missing required fields"));
   }
 
-  res.status(200).json(result);
+  try {
+    const result = await candidateService.updatePersonal({
+      full_name,
+      speciality,
+      experience,
+      education,
+      website,
+      id: userId,
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const updateCandidateProfile = async (
@@ -65,34 +84,46 @@ const updateCandidateProfile = async (
   const { userId } = req as unknown as CustomRequest;
   const { biography, date_of_birth, gender, experience, education } = req.body;
 
-  const result = await candidateService.updateProfile({
-    biography,
-    date_of_birth,
-    gender,
-    experience,
-    education,
-    id: userId,
-  });
-
-  if (!result.ok) {
-    return next(errorHandler(result.code, result.message));
+  if (!biography || !date_of_birth || !gender || !experience || !education) {
+    return next(errorHandler(400, "Missing required fields"));
   }
 
-  res.status(200).json(result);
+  try {
+    const result = await candidateService.updateProfile({
+      biography,
+      date_of_birth,
+      gender,
+      experience,
+      education,
+      id: userId,
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
-const updateContact = async (req: Request, res: Response) => {
+const updateContact = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { location, email, phone } = req.body;
   const { userId } = req as unknown as CustomRequest;
 
-  const result = await candidateService.updateContact({
-    id: userId,
-    location,
-    email,
-    phone,
-  });
+  try {
+    await candidateService.updateContact({
+      id: userId,
+      location,
+      email,
+      phone,
+    });
 
-  return res.status(200).json();
+    res.sendStatus(204);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export default {
