@@ -13,12 +13,24 @@ export interface ISignUp {
   confirmPassword: string;
 }
 
-export interface IResponse {
-  ok: boolean;
-  data?: { data: { role: "employer" | "candidate" } } | string;
-  code?: number;
-  message?: string;
+export interface IServiceSigninResponse {
+  data: IUser;
+  token: string;
+  // role: "employer" | "candidate";
 }
+
+export type ISingnInResponse = Pick<IServiceSigninResponse, "data">;
+
+export interface ISendEmailResponse {
+  token: string;
+}
+
+// export interface IResponse {
+//   ok: boolean;
+//   data?: { data: { role: "employer" | "candidate" } } | string;
+//   code?: number;
+//   message?: string;
+// }
 
 // export interface ISigninResponse extends IResponse {
 //   ok: boolean;
@@ -33,9 +45,18 @@ export interface IResponse {
 //   | { ok: true; payload: string }
 //   | { ok: false; code: number; message: string };
 
-export type AuthResponse =
-  | { ok: true; payload: string }
-  | { ok: false; code: number; message: string };
+// export type AuthResponse =
+//   | { ok: true; payload: string }
+//   | { ok: false; code: number; message: string };
+
+// export interface AuthResponse {
+//   payload: string;
+// }
+
+export interface SignupResponse {
+  token: string;
+  data: IUser;
+}
 
 export type AuthSigninResponse =
   | {
@@ -65,7 +86,7 @@ export interface IUser {
   email: string;
 }
 
-export type GetMe = ErrorReqResponse | { ok: true; user: IUser };
+// export type GetMe = ErrorReqResponse | { ok: true; user: IUser };
 
 // job interfaces
 
@@ -94,9 +115,24 @@ export interface IJobData extends PostJob {
   [key: string]: unknown;
 }
 
-export type EmployerJobRes =
-  | { ok: true; job: IJobData | IJobData[] }
-  | ErrorReqResponse;
+// export type EmployerJobRes =
+//   | {
+//       ok: true;
+//       job: IJobData | IJobData[];
+//       meta?: {
+//         allAmountOfJobs?: number;
+//         limit?: number;
+//       };
+//     }
+//   | ErrorReqResponse;
+
+export type EmployerJobRes = {
+  job: IJobData | IJobData[];
+  meta?: {
+    allAmountOfJobs?: number;
+    limit?: number;
+  };
+};
 
 export interface EmployerRecentJobs {
   id: string;
@@ -107,23 +143,16 @@ export interface EmployerRecentJobs {
   application_count: number;
 }
 
-export type EmployerRecentJobsRes =
-  | { ok: true; data: EmployerRecentJobs[] }
-  | ErrorReqResponse;
+export type EmployerRecentJobsRes = { data: EmployerRecentJobs[] };
 
-export type CandidateJobRes =
-  | {
-      ok: true;
-      data: {
-        jobs: IJobData | IJobData[];
-        meta?: {
-          page: number;
-          limit: 12 | 16;
-          total: number;
-        };
-      };
-    }
-  | ErrorReqResponse;
+export type CandidateJobRes = {
+  jobs: IJobData | IJobData[];
+  meta?: {
+    page: number;
+    limit: 12 | 16;
+    total: number;
+  };
+};
 
 // candidates
 
@@ -153,14 +182,17 @@ export type FullDataCandidate = Omit<IUser, "role"> & {
 // 	created_at TIMESTAMP DEFAULT NOW(),
 // 	updated_at TIMESTAMP DEFAULT NOW()
 
-export type Candidates =
-  | {
-      ok: true;
-      data?: IUser | IUser[] | FullDataCandidate;
-    }
-  | ErrorReqResponse;
+export type Candidates = { data: IUser | IUser[] | FullDataCandidate };
 
 export type CandidatesRes = IUser | IUser[] | FullDataCandidate;
+
+export type CandidateResData = {
+  data: CandidatesRes;
+  meta: {
+    limit: number;
+    total: number;
+  };
+};
 
 export interface UpdateCandidateProfile {
   id: string;

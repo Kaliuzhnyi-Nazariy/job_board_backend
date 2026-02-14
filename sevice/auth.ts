@@ -4,11 +4,12 @@ import jwt from "jsonwebtoken";
 import {
   ISignIn,
   ISignUp,
-  AuthResponse,
+  // AuthResponse,
   IChangePassword,
-  AuthSigninResponse,
+  // AuthSigninResponse,
   IServiceSigninResponse,
   ISendEmailResponse,
+  SignupResponse,
 } from "./interfaces";
 import helper from "../helper";
 import { v4 as uuidv4 } from "uuid";
@@ -33,7 +34,7 @@ const signup = async ({
   email,
   password,
   confirmPassword,
-}: ISignUp): Promise<AuthResponse> => {
+}: ISignUp): Promise<SignupResponse> => {
   const user = await db.query(`select * from users where email=$1`, [email]);
 
   if (user.rows.length > 0) {
@@ -70,7 +71,7 @@ const signup = async ({
     ]);
   }
 
-  return { payload: token };
+  return { token: token, data: newUser.rows[0] };
 };
 
 /*
@@ -83,7 +84,10 @@ const signin = async ({
   email,
   password,
 }: ISignIn): Promise<IServiceSigninResponse> => {
-  const user = await db.query("SELECT * FROM users WHERE email=$1", [email]);
+  const user = await db.query(
+    "SELECT id, role, username, full_name, email, password FROM users WHERE email=$1",
+    [email],
+  );
 
   if (!user.rows[0]) {
     throw errorHandler(400, "Invalid credentials");
@@ -106,8 +110,15 @@ const signin = async ({
   const token = jwt.sign(payload, JWT_SECRET!, { expiresIn: "96h" });
 
   return {
-    data: token,
-    role: userData.role,
+    data: {
+      id: userData.id,
+      role: userData.role,
+      username: userData.username,
+      full_name: userData.full_name,
+      email: userData.email,
+    },
+    token: token,
+    // role: userData.role,
   };
 };
 

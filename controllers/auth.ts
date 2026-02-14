@@ -39,9 +39,9 @@ const signup = async (
       confirmPassword,
     });
 
-    res.cookie("token", result.payload, helper.cookieSettings);
+    res.cookie("token", result.token, helper.cookieSettings);
 
-    res.sendStatus(201);
+    res.status(201).json(result.data);
   } catch (error) {
     next(error);
   }
@@ -60,11 +60,11 @@ const signin = async (
     return next(errorHandler(400, "Missing required field"));
 
   try {
-    const { data, role } = await authService.signin({ email, password });
+    const { data, token } = await authService.signin({ email, password });
 
-    res.cookie("token", data, helper.cookieSettings);
+    res.cookie("token", token, helper.cookieSettings);
 
-    res.status(200).json({ role });
+    res.status(200).json({ data });
   } catch (error) {
     next(error);
   }
