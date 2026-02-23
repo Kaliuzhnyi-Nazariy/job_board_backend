@@ -16,5 +16,7 @@ export const uploadPhoto = async (
 };
 
 export const deleteCloudPhoto = async (userId: string) => {
-  await cloudinary.uploader.destroy(`user_${userId}`);
+  return await cloudinary.uploader.destroy(
+    `job_board_account_images/user_${userId}`,
+  );
 };
