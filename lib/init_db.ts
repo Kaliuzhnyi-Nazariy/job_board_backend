@@ -27,7 +27,8 @@ END$$ LANGUAGE plpgsql;
     full_name VARCHAR(128) NOT NULL,
     username VARCHAR(128) NOT NULL,
     email VARCHAR(128) UNIQUE,
-    password VARCHAR(256) NOT NULL
+    password VARCHAR(256) NOT NULL,
+    photo VARCHAR (256) DEFAULT NULL
     );
 
 CREATE TABLE IF NOT EXISTS password_reset_tokens (
