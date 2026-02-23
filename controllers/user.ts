@@ -72,4 +72,48 @@ const deleteAccount = async (
   }
 };
 
-export default { getMe, changePassword, deleteAccount };
+const updatePhoto = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.file) return next(errorHandler(400, "File is not found"));
+
+  const photo = req.file;
+
+  if (!photo.mimetype.startsWith("image/")) {
+    return next(errorHandler(400, "File must be an image"));
+  }
+
+  if (photo.size > 1 * 1024 * 1024) {
+    return next(errorHandler(400, "Photo should be less than 1mb"));
+  }
+
+  const { userId } = req as unknown as CustomRequest;
+
+  if (!userId) {
+    return next(errorHandler(401, "User not found"));
+  }
+
+  try {
+    await userService.uploadUserPhoto(req.file, userId);
+
+    res.sendStatus(200);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deletePhoto = async (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req as unknown as CustomRequest;
+
+  try {
+    await userService.deletePhoto(userId);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default {
+  getMe,
+  changePassword,
+  deleteAccount,
+  updatePhoto,
+  deletePhoto,
+};

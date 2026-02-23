@@ -1,7 +1,10 @@
+import multer, { Multer } from "multer";
 import { errorHandler } from "../helper/errorHandler";
 import db from "../lib/db";
 import { IUser } from "./interfaces";
 import bcrypt from "bcryptjs";
+import { deleteCloudPhoto, uploadPhoto } from "../lib/cloudinary/service";
+import fs from "fs/promises";
 
 /*
   check whether user exists
@@ -60,4 +63,39 @@ const deleteAccount = async (id: string) => {
   await db.query("DELETE FROM users WHERE id=$1", [id]);
 };
 
-export default { getMe, changePassword, deleteAccount };
+const uploadUserPhoto = async (file: Express.Multer.File, userId: string) => {
+  const res = await uploadPhoto(file, userId);
+
+  try {
+    await db.query("UPDATE users SET photo=$1 WHERE id=$2", [
+      res.secure_url,
+      userId,
+    ]);
+  } catch (error) {
+    await deleteCloudPhoto(userId);
+    throw error;
+  } finally {
+    await fs.unlink(file?.path);
+  }
+};
+
+const deletePhoto = async (userId: string) => {
+  const userPhoto = await db.query("SELECT photo FROM users WHERE id=$1", [
+    userId,
+  ]);
+
+  const isPhoto = userPhoto.rows[0]?.photo;
+
+  if (!isPhoto) throw errorHandler(400, "User don't have photo");
+
+  await deleteCloudPhoto(userId);
+  await db.query("UPDATE users SET photo=NULL WHERE id=$1", [userId]);
+};
+
+export default {
+  getMe,
+  changePassword,
+  deleteAccount,
+  uploadUserPhoto,
+  deletePhoto,
+};

@@ -3,6 +3,9 @@ import authCtrl from "../controllers/auth";
 import userCtrl from "../controllers/user";
 import middlewares from "../middlewares";
 import isAuthenticated from "../middlewares/authenticated";
+import multer from "multer";
+
+const upload = multer({ dest: "uploads/" });
 
 const router = Router();
 
@@ -25,5 +28,14 @@ router.get("/get-me", isAuthenticated, userCtrl.getMe);
 router.patch("/change-password", isAuthenticated, userCtrl.changePassword);
 
 router.delete("/delete", isAuthenticated, userCtrl.deleteAccount);
+
+router.patch(
+  "/photo",
+  isAuthenticated,
+  upload.single("photo"),
+  userCtrl.updatePhoto,
+);
+
+router.delete("/photo", isAuthenticated, userCtrl.deletePhoto);
 
 export default router;
