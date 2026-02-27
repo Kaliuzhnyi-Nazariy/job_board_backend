@@ -105,6 +105,7 @@ const deletePhoto = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     await userService.deletePhoto(userId);
+    res.sendStatus(200);
   } catch (error) {
     next(error);
   }

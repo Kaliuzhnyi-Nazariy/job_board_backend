@@ -13,7 +13,7 @@ import fs from "fs/promises";
 
 const getMe = async (userId: string): Promise<IUser> => {
   const user = await db.query<IUser>(
-    "SELECT role, username, full_name, email FROM users WHERE id=$1;",
+    "SELECT role, username, full_name, email, photo FROM users WHERE id=$1;",
     [userId],
   );
 
