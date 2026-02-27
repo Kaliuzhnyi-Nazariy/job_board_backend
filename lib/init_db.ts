@@ -21,15 +21,15 @@ BEGIN
     END IF;
 END$$ LANGUAGE plpgsql;
 
-    CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY NOT NULL,
-    role roles,
-    full_name VARCHAR(128) NOT NULL,
-    username VARCHAR(128) NOT NULL,
-    email VARCHAR(128) UNIQUE,
-    password VARCHAR(256) NOT NULL,
-    photo VARCHAR (256) DEFAULT NULL
-    );
+        CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY NOT NULL,
+        role roles,
+        full_name VARCHAR(128) NOT NULL,
+        username VARCHAR(128) NOT NULL,
+        email VARCHAR(128) UNIQUE,
+        password VARCHAR(256) NOT NULL,
+        photo VARCHAR (256) DEFAULT NULL
+        );
 
 CREATE TABLE IF NOT EXISTS password_reset_tokens (
 id UUID PRIMARY KEY,
@@ -87,8 +87,17 @@ job_id UUID REFERENCES jobs(id)  ON DELETE CASCADE NOT NULL,
 covering_letter VARCHAR(512),
 status statuses default 'applied',
 applied_at TIMESTAMP DEFAULT now()
- )
-  `);
+ );
+
+CREATE TABLE IF NOT EXISTS cvs (
+id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+user_id INT REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+filename VARCHAR(128),
+file_size INT,
+created_at TIMESTAMP DEFAULT NOW()
+);
+`);
+    // cloud_key uuid NOT NULL,
 
     console.log("created successully!");
   } catch (error) {
