@@ -148,16 +148,6 @@ const sendEmail = async (email: string): Promise<ISendEmailResponse> => {
     expiresIn: "24h",
   });
 
-  // const isMailSent = await helper.sendEmail({
-  //   email,
-  //   fullName: userFullName,
-  //   tokenId: token,
-  // });
-
-  // if (!isMailSent.ok) {
-  // throw errorHandler(400, "Mail error!");
-  // }
-
   const hashedToken = await bcrypt.hash(token, 10);
 
   const tokenUUID = uuidv4();
@@ -173,6 +163,16 @@ const sendEmail = async (email: string): Promise<ISendEmailResponse> => {
     if ((error as { code: string }).code === "23505") {
       throw errorHandler(409, "Token have already been sent to your email!");
     }
+  }
+
+  const isMailSent = await helper.sendEmail({
+    email,
+    fullName: userFullName,
+    tokenId: token,
+  });
+
+  if (!isMailSent.ok) {
+    throw errorHandler(400, "Mail error!");
   }
 
   return { token };
