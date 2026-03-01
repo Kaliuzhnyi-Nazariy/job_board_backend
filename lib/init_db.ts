@@ -86,6 +86,7 @@ user_id INT REFERENCES users(id) NOT NULL,
 job_id UUID REFERENCES jobs(id)  ON DELETE CASCADE NOT NULL,
 covering_letter VARCHAR(512),
 status statuses default 'applied',
+cv_id UUID REFERENCES cvs(id) NOT NULL,
 applied_at TIMESTAMP DEFAULT now()
  );
 
