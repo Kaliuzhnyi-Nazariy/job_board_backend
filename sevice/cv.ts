@@ -41,7 +41,7 @@ const uploadCV = async (
   }
 };
 
-const deleteCV = async (userId: string, cvId: string, filename: string) => {
+const deleteCV = async (userId: string, cvId: string) => {
   const isCV = await db.query("SELECT * FROM cvs WHERE user_id=$1 AND id=$2", [
     userId,
     cvId,
@@ -51,7 +51,8 @@ const deleteCV = async (userId: string, cvId: string, filename: string) => {
     throw errorHandler(400, "CV is not found");
   }
 
-  await deleteFile(filename);
+  await deleteFile(isCV.rows[0].filename);
+  // await deleteFile(filename);
   await db.query(`DELETE FROM cvs WHERE user_id=$1 AND id=$2;`, [userId, cvId]);
 };
 
@@ -90,11 +91,8 @@ const updateCV = async (
   }
 };
 
-const getPresignedURL = async (cvId: string, userId: string) => {
-  const isCV = await db.query("SELECT * FROM cvs WHERE user_id=$1 AND id=$2", [
-    userId,
-    cvId,
-  ]);
+const getPresignedURL = async (cvId: string) => {
+  const isCV = await db.query("SELECT * FROM cvs WHERE id=$1", [cvId]);
 
   if (isCV.rowCount == 0) {
     throw errorHandler(400, "CV is not found");

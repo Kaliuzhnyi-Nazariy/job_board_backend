@@ -9,7 +9,7 @@ const router = Router();
 
 router.post("/", isAuthenticated, upload.single("resume"), ctrl.uploadCV);
 
-router.delete("/", isAuthenticated, ctrl.deleteCV);
+router.delete("/:cvId", isAuthenticated, ctrl.deleteCV);
 
 router.put(
   "/:cvId",
