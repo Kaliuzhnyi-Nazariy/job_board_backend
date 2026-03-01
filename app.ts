@@ -18,6 +18,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://job-board-eight-beta.vercel.app/",
+      "https://job-board-eight-beta.vercel.app",
     ],
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
