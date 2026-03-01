@@ -3,11 +3,12 @@ import { Pool } from "pg";
 let db: Pool;
 
 if (process.env.NODE_ENV === "production") {
-  const { DB_HOST, DB_PORT, DB_PASSWORD, DB_USER, DB_DATABASE } = process.env;
+  const { DB_HOST, DB_PORT, DB_PASSWORD, DB_USERNAME, DB_DATABASE } =
+    process.env;
 
   db = new Pool({
     host: DB_HOST,
-    user: DB_USER,
+    user: DB_USERNAME,
     password: DB_PASSWORD,
     database: DB_DATABASE,
     port: Number(DB_PORT),
