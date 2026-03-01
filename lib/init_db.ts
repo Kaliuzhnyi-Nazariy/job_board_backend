@@ -6,17 +6,21 @@ const initDB = async () => {
     await db.query(`
       CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-DO $$
+DDO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'roles') THEN
         CREATE TYPE roles AS ENUM ('employer', 'candidate');
     END IF;
 
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'worktimes') THEN
-        CREATE TYPE worktimes AS ENUM ('full_time', 'part_time', 'internship', 'contract');
+	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'workTime') THEN
+        CREATE TYPE workTimes AS ENUM ('full_time', 'part_time', 'internship', 'contract');
     END IF;
 
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'genders') THEN
+	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statuses') THEN
+        CREATE TYPE statuses AS ENUM ('applied', 'rejected', 'accepted');
+    END IF;
+
+	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'genders') THEN
         CREATE TYPE genders AS ENUM ('Mr', 'Ms', 'Mx');
     END IF;
 END$$ LANGUAGE plpgsql;
@@ -107,17 +111,3 @@ created_at TIMESTAMP DEFAULT NOW()
 };
 
 export default initDB;
-
-// final:
-// CREATE TABLE IF NOT EXISTS password_reset_tokens (
-// id UUID PRIMARY KEY,
-// user_id INT REFERENCES users(id) UNIQUE,
-// token_hash TEXT NOT NULL,
-// created_at TIMESTAMP DEFAULT now()
-
-// CREATE TABLE IF NOT EXISTS password_reset_tokens (
-// id UUID PRIMARY KEY,
-// user_id INT REFERENCES users(id) UNIQUE,
-// token_hash TEXT NOT NULL,
-// expires_at TIMESTAMP NOT NULL,
-// created_at TIMESTAMP DEFAULT now()
