@@ -11,6 +11,7 @@ if (process.env.NODE_ENV === "production") {
     password: DB_PASSWORD,
     database: DB_DATABASE,
     port: Number(DB_PORT),
+    ssl: { rejectUnauthorized: false },
   });
 } else {
   const { PG_HOST, PG_PORT, PG_PASSWORD, PG_USER, PG_DATABASE } = process.env;
