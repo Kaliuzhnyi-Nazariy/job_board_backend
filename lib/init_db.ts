@@ -12,7 +12,7 @@ BEGIN
         CREATE TYPE roles AS ENUM ('employer', 'candidate');
     END IF;
 
-	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'workTime') THEN
+	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'workTimes') THEN
         CREATE TYPE workTimes AS ENUM ('full_time', 'part_time', 'internship', 'contract');
     END IF;
 
@@ -84,6 +84,14 @@ CREATE TABLE IF NOT EXISTS candidate_profiles (
 	updated_at TIMESTAMP DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS cvs (
+id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+user_id INT REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+filename VARCHAR(128),
+file_size INT,
+created_at TIMESTAMP DEFAULT NOW()
+);
+
  CREATE TABLE IF NOT EXISTS job_applications (
 id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 user_id INT REFERENCES users(id) NOT NULL,
@@ -94,15 +102,8 @@ cv_id UUID REFERENCES cvs(id) NOT NULL,
 applied_at TIMESTAMP DEFAULT now()
  );
 
-CREATE TABLE IF NOT EXISTS cvs (
-id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-user_id INT REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-filename VARCHAR(128),
-file_size INT,
-created_at TIMESTAMP DEFAULT NOW()
-);
+
 `);
-    // cloud_key uuid NOT NULL,
 
     console.log("created successully!");
   } catch (error) {
