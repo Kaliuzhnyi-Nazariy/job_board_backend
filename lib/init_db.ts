@@ -6,7 +6,7 @@ const initDB = async () => {
     await db.query(`
       CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-DDO $$
+DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'roles') THEN
         CREATE TYPE roles AS ENUM ('employer', 'candidate');
