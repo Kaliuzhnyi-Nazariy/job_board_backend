@@ -10,14 +10,16 @@ const applyToJob = async ({
   userId,
   jobId,
   coveringLetter,
+  cvId,
 }: {
   userId: string;
   jobId: string;
   coveringLetter?: string;
+  cvId: string;
 }): Promise<void> => {
   await db.query(
-    `INSERT INTO job_applications (user_id, job_id, covering_letter) VALUES ($1, $2, $3)`,
-    [userId, jobId, coveringLetter],
+    `INSERT INTO job_applications (user_id, job_id, covering_letter, cv_id) VALUES ($1, $2, $3, $4)`,
+    [userId, jobId, coveringLetter, cvId],
   );
 };
 
@@ -89,7 +91,7 @@ const getApplicationDetails = async ({
   applicationId: string;
 }) => {
   const res = await db.query(
-    `SELECT ja.*, u.full_name, u.email, cp.* FROM job_applications ja LEFT JOIN users u ON ja.user_id = u.id LEFT JOIN candidate_profiles cp ON cp.user_id = u.id WHERE ja.job_id = $1 AND ja.id = $2;`,
+    `SELECT ja.*, u.full_name, u.email, cp.*, c.filename FROM job_applications ja LEFT JOIN users u ON ja.user_id = u.id LEFT JOIN candidate_profiles cp ON cp.user_id = u.id LEFT JOIN cvs c ON c.id=ja.cv_id  WHERE ja.job_id = $1 AND ja.id = $2;`,
     [jobId, applicationId],
   );
 

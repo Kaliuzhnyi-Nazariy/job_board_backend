@@ -8,7 +8,7 @@ import { errorHandler } from "../helper/errorHandler";
 const applyToJob = async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req as unknown as CustomRequest;
   const { jobId } = req.params;
-  const { coveringLetter } = req.body;
+  const { coveringLetter, cvId } = req.body;
 
   if (!userId) {
     return next(errorHandler(400, "user ID is required"));
@@ -23,6 +23,7 @@ const applyToJob = async (req: Request, res: Response, next: NextFunction) => {
       userId,
       coveringLetter,
       jobId,
+      cvId,
     });
 
     return res.status(201).json();
