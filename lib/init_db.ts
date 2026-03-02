@@ -102,12 +102,6 @@ cv_id UUID REFERENCES cvs(id) NOT NULL,
 applied_at TIMESTAMP DEFAULT now()
  );
  
- ALTER TABLE jobs
-DROP CONSTRAINT IF EXISTS jobs_owner_id_fkey,
-ADD CONSTRAINT jobs_owner_id_fkey
-FOREIGN KEY (owner_id)
-REFERENCES users(id)
-ON DELETE CASCADE;
 
 `);
 
