@@ -12,9 +12,9 @@ BEGIN
         CREATE TYPE roles AS ENUM ('employer', 'candidate');
     END IF;
 
-	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'workTimes') THEN
-        CREATE TYPE workTimes AS ENUM ('full_time', 'part_time', 'internship', 'contract');
-    END IF;
+IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'worktimes') THEN
+    CREATE TYPE workTimes AS ENUM ('full_time', 'part_time', 'internship', 'contract');
+END IF;
 
 	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statuses') THEN
         CREATE TYPE statuses AS ENUM ('applied', 'rejected', 'accepted');
@@ -101,7 +101,13 @@ status statuses default 'applied',
 cv_id UUID REFERENCES cvs(id) NOT NULL,
 applied_at TIMESTAMP DEFAULT now()
  );
-
+ 
+ ALTER TABLE jobs
+DROP CONSTRAINT IF EXISTS jobs_owner_id_fkey,
+ADD CONSTRAINT jobs_owner_id_fkey
+FOREIGN KEY (owner_id)
+REFERENCES users(id)
+ON DELETE CASCADE;
 
 `);
 
