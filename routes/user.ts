@@ -15,7 +15,7 @@ router.post("/auth/signup", authCtrl.signup);
 
 router.post("/auth/signin", authCtrl.signin);
 
-router.post("/auth/signout", middlewares.isAuthenticated, authCtrl.logout);
+// router.post("/auth/signout", middlewares.isAuthenticated, authCtrl.logout);
 
 router.post("/auth/email-for-reset", authCtrl.sendEmailForResetPassword);
 
