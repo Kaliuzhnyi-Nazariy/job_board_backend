@@ -91,13 +91,15 @@ const updateCandidateProfile = async (
   const { userId } = req as unknown as CustomRequest;
   const { biography, date_of_birth, gender, experience, education } = req.body;
 
+  console.log({ biography, date_of_birth, gender, experience, education });
+
   if (
-    biography !== null ||
-    date_of_birth !== null ||
-    gender !== null ||
+    biography == null ||
+    date_of_birth == null ||
+    gender == null ||
     !gender ||
-    experience !== null ||
-    education !== null
+    experience == null ||
+    education == null
   ) {
     return next(errorHandler(400, "Missing required fields"));
   }
@@ -126,7 +128,7 @@ const updateContact = async (
   const { location, email, phone } = req.body;
   const { userId } = req as unknown as CustomRequest;
 
-  if (location !== null || email !== null || !email || phone !== null)
+  if (location == null || email == null || !email || phone == null)
     return next(errorHandler(400, "Not all fields were sent"));
 
   try {
