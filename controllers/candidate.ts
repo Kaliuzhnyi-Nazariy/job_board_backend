@@ -56,7 +56,14 @@ const updateCandidatePersonal = async (
   const { userId } = req as unknown as CustomRequest;
   const { full_name, speciality, experience, education, website } = req.body;
 
-  if (!full_name || !speciality || !experience || !education || !website) {
+  if (
+    full_name == null ||
+    !full_name ||
+    speciality == null ||
+    experience == null ||
+    education == null ||
+    website == null
+  ) {
     return next(errorHandler(400, "Missing required fields"));
   }
 
@@ -84,7 +91,14 @@ const updateCandidateProfile = async (
   const { userId } = req as unknown as CustomRequest;
   const { biography, date_of_birth, gender, experience, education } = req.body;
 
-  if (!biography || !date_of_birth || !gender || !experience || !education) {
+  if (
+    biography !== null ||
+    date_of_birth !== null ||
+    gender !== null ||
+    !gender ||
+    experience !== null ||
+    education !== null
+  ) {
     return next(errorHandler(400, "Missing required fields"));
   }
 
@@ -111,6 +125,9 @@ const updateContact = async (
 ) => {
   const { location, email, phone } = req.body;
   const { userId } = req as unknown as CustomRequest;
+
+  if (location !== null || email !== null || !email || phone !== null)
+    return next(errorHandler(400, "Not all fields were sent"));
 
   try {
     await candidateService.updateContact({
