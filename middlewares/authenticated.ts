@@ -9,10 +9,12 @@ const { JWT_SECRET } = process.env;
 const isAuthenticated = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
-  const cookies = req.cookies;
-  const token = cookies["token"];
+  const { authorization = "" } = req.headers;
+  const [bearer, token] = authorization.split(" ");
+
+  if (bearer !== "Bearer") return next(errorHandler(401));
 
   if (!token) {
     return next(errorHandler(401));
@@ -25,7 +27,7 @@ const isAuthenticated = async (
 
   const user = await db.query(
     "SELECT id, role, full_name, username, email FROM users where id=$1 and email=$2",
-    [tokenData.id, tokenData.email]
+    [tokenData.id, tokenData.email],
   );
 
   if (user.rows.length === 0) {

@@ -25,7 +25,7 @@ app.use(
   }),
 );
 
-app.use(cookieParser());
+// app.use(cookieParser());
 
 app.use("/api/user", userRoutes);
 

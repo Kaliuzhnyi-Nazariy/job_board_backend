@@ -4,6 +4,7 @@ import {
   ISignIn,
   ISingnInResponse,
   ISendEmailResponse,
+  IServiceSigninResponse,
 } from "../sevice/interfaces";
 
 import authService from "../sevice/auth";
@@ -39,9 +40,9 @@ const signup = async (
       confirmPassword,
     });
 
-    res.cookie("token", result.token, helper.cookieSettings);
+    // res.cookie("token", result.token, helper.cookieSettings);
 
-    res.status(201).json(result.data);
+    res.status(201).json(result);
   } catch (error) {
     next(error);
   }
@@ -51,7 +52,7 @@ const signup = async (
 
 const signin = async (
   req: Request<{}, {}, ISignIn>,
-  res: Response<ISingnInResponse>,
+  res: Response<IServiceSigninResponse>,
   next: NextFunction,
 ) => {
   const { email, password } = req.body;
@@ -62,9 +63,9 @@ const signin = async (
   try {
     const { data, token } = await authService.signin({ email, password });
 
-    res.cookie("token", token, helper.cookieSettings);
+    // res.cookie("token", token, helper.cookieSettings);
 
-    res.status(200).json({ data });
+    res.status(200).json({ data, token });
   } catch (error) {
     next(error);
   }
@@ -72,10 +73,10 @@ const signin = async (
 
 // ======================================== //
 
-const logout = async (req: Request, res: Response, next: NextFunction) => {
-  res.clearCookie("token", helper.cookieSettings);
-  res.sendStatus(204);
-};
+// const logout = async (req: Request, res: Response, next: NextFunction) => {
+//   res.clearCookie("token", helper.cookieSettings);
+//   res.sendStatus(204);
+// };
 
 const sendEmailForResetPassword = async (
   req: Request,
@@ -128,7 +129,7 @@ const changePassword = async (
 export default {
   signup,
   signin,
-  logout,
+  // logout,
   sendEmailForResetPassword,
   changePassword,
 };
