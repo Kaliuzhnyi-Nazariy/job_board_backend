@@ -63,8 +63,9 @@ DB_HOST=
 ```
 
 ### Starting
+```
 npm run dev
-
+```
 ## API Endpoints
 
 ### POST /api/user/auth/signup
@@ -95,3 +96,69 @@ npm run dev
     }
 }
 ```
+
+### GET /api/job/my-jobs
+
+#### RESPONSE
+
+```
+{
+    "job": [
+        {
+            "id": id,
+            "title": "title",
+            "work_time": "full_time",
+            "created_at": "2026-01-05T21:04:39.644Z",
+            "applications_count": "0"
+        }
+    ],
+    "meta": {
+        "allAmountOfJobs": 1,
+        "limit": 6
+    }
+}
+```
+
+### POST /api/application/:jobId
+
+#### REQUEST
+
+```
+{
+"cvId": cvId,
+"coveriLetter": "Cover letter"
+}
+```
+
+### GET /api/application/my?page=
+
+#### RESPONSE
+
+```
+[
+    {
+        "title": "title",
+        "location": "location",
+        "salary": "salary",
+        "work_time": "work_time",
+        "status": "status",
+        "applied_at": data,
+        "id": id
+    }
+]
+```
+
+### GET /api/cv/
+
+```
+[
+    {
+        "id": cv_id,
+        "user_id": id,
+        "filename": "filenamef",
+        "file_size": file_size,
+        "created_at": date
+    }
+]
+```
+
