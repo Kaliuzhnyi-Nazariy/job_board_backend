@@ -91,8 +91,6 @@ const updateCandidateProfile = async (
   const { userId } = req as unknown as CustomRequest;
   const { biography, date_of_birth, gender, experience, education } = req.body;
 
-  console.log({ biography, date_of_birth, gender, experience, education });
-
   if (
     biography == null ||
     date_of_birth == null ||
