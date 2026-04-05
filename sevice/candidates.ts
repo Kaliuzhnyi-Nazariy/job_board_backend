@@ -29,6 +29,7 @@ const getCandidates = async ({
   u.role,
   u.full_name,
   u.email,
+  u.photo,
   cp.location,
   cp.experience
 FROM users u
@@ -60,6 +61,7 @@ const getCandidate = async (id: string): Promise<Candidates> => {
   u.full_name,
   u.username,
   u.email,
+  u.photo,
 
   c.biography,
   c.speciality,
