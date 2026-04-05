@@ -62,7 +62,7 @@ DB_HOST=
 
 ```
 
-###Starting
+### Starting
 npm run dev
 
 ## API Endpoints
