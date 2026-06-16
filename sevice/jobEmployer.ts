@@ -103,9 +103,10 @@ const updateJob = async ({
   education,
   responsibilities,
   experience,
+  owner,
 }: Partial<UpdateJob>): Promise<EmployerJobRes> => {
   const res = await db.query(
-    "UPDATE jobs SET title=$1, position=$2, location=$3, salary=$4,education=$5, experience=$6, responsibilities=$7,  work_time=$8, description=$9 WHERE id=$10 RETURNING *",
+    "UPDATE jobs SET title=$1, position=$2, location=$3, salary=$4,education=$5, experience=$6, responsibilities=$7,  work_time=$8, description=$9 WHERE id=$10 AND owner_id=$11 RETURNING *",
     [
       title,
       position,
@@ -117,6 +118,7 @@ const updateJob = async ({
       workTime,
       description,
       jobId,
+      owner,
     ],
   );
 

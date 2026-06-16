@@ -105,7 +105,7 @@ export interface PostJob {
   owner: string;
 }
 
-export type UpdateJob = Omit<PostJob, "owner"> & {
+export type UpdateJob = PostJob & {
   jobId: string;
   description: string;
 };
