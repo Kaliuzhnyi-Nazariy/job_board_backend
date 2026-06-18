@@ -46,7 +46,6 @@ const deleteCV = async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req as unknown as CustomRequest;
 
   try {
-    // await cvService.deleteCV(userId, cvId, filename + ".pdf");
     await cvService.deleteCV(userId, cvId);
 
     return res.sendStatus(204);
@@ -93,21 +92,20 @@ const updateCVFile = async (
   }
 };
 
-const getPresigndURL = async (
+const getPresignedURL = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   const { cvId } = req.params;
+  const { userId } = req as unknown as CustomRequest;
 
   if (!cvId) {
     return next(errorHandler(400, "CV id is required"));
   }
 
-  // const { userId } = req as unknown as CustomRequest;
-
   try {
-    const link = await cvService.getPresignedURL(cvId);
+    const link = await cvService.getPresignedURL(cvId, userId);
 
     res.status(200).json(link);
   } catch (error) {
@@ -126,4 +124,4 @@ const getMyCVs = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export default { uploadCV, deleteCV, updateCVFile, getPresigndURL, getMyCVs };
+export default { uploadCV, deleteCV, updateCVFile, getPresignedURL, getMyCVs };
