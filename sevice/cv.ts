@@ -26,7 +26,7 @@ const uploadCV = async (
 
   const finalFinalName = filename
     ? `${filename}.${file.mimetype.split("/")[1]}`
-    : file.originalname;
+    : file.originalname + user_id;
 
   try {
     await uploadFile(file.buffer, finalFinalName);
@@ -91,8 +91,11 @@ const updateCV = async (
   }
 };
 
-const getPresignedURL = async (cvId: string) => {
-  const isCV = await db.query("SELECT * FROM cvs WHERE id=$1", [cvId]);
+const getPresignedURL = async (cvId: string, userId: string) => {
+  const isCV = await db.query("SELECT * FROM cvs WHERE id=$1 AND user_id=$2", [
+    cvId,
+    userId,
+  ]);
 
   if (isCV.rowCount == 0) {
     throw errorHandler(400, "CV is not found");
