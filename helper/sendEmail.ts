@@ -13,6 +13,7 @@ interface MailData {
 export interface MailResult {
   ok: boolean;
 }
+const { FRONTEND_URL } = process.env;
 
 export const sendEmail = async ({
   email,
@@ -49,7 +50,7 @@ export const sendEmail = async ({
       </p>
 
       <a 
-        href="https://your-frontend-domain.com/reset-password/${tokenId}" 
+        href="${FRONTEND_URL}/reset-password/${tokenId}" 
         target="_blank"
         style="
           display: inline-block;
