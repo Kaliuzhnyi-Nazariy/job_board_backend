@@ -1,3 +1,4 @@
 import isAuthenticated from "./authenticated";
+import { isAuthorized } from "./isAuthorized";
 
-export default { isAuthenticated };
+export { isAuthenticated, isAuthorized };

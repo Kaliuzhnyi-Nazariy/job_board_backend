@@ -1,5 +1,6 @@
+import type { Request } from "express";
+
 export interface CustomRequest extends Request {
   userId: string;
-  //   email: string;
-  //   fullName: string;
+  role: "employer" | "candidate";
 }

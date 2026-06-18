@@ -34,9 +34,8 @@ const isAuthenticated = async (
     return next(errorHandler(401));
   }
 
-  (req as unknown as CustomRequest).userId = String(tokenData.id);
-  //   (req as unknown as CustomRequest).email = String(tokenData.email);
-  //   (req as unknown as CustomRequest).fullName = String(user.rows[0].email);
+  (req as unknown as CustomRequest).userId = user.rows[0].id;
+  (req as unknown as CustomRequest).role = user.rows[0].role;
 
   next();
 };
