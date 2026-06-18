@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 import userRoutes from "./routes/user";
-import jobRoutes from "./routes/job/job";
+import jobRoutes from "./routes/job";
 import candidateRoutes from "./routes/candidate";
 import applicationRoutes from "./routes/applications";
 import cvRouters from "./routes/cv";
