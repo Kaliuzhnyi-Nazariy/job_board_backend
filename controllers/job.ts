@@ -91,6 +91,7 @@ const getMyJobById = async (
 };
 
 const updateJob = async (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req as unknown as CustomRequest;
   const { jobId } = req.params;
   const {
     title,
@@ -120,6 +121,7 @@ const updateJob = async (req: Request, res: Response, next: NextFunction) => {
       education,
       experience,
       responsibilities,
+      owner: userId,
     });
 
     res.status(200).json(result);

@@ -7,19 +7,16 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 const router = Router();
 
-router.post("/", isAuthenticated, upload.single("resume"), ctrl.uploadCV);
+router.use(isAuthenticated);
 
-router.delete("/:cvId", isAuthenticated, ctrl.deleteCV);
+router.post("/", upload.single("resume"), ctrl.uploadCV);
 
-router.put(
-  "/:cvId",
-  isAuthenticated,
-  upload.single("resume"),
-  ctrl.updateCVFile,
-);
+router.delete("/:cvId", ctrl.deleteCV);
 
-router.get("/:cvId/download", isAuthenticated, ctrl.getPresigndURL);
+router.put("/:cvId", upload.single("resume"), ctrl.updateCVFile);
 
-router.get("/", isAuthenticated, ctrl.getMyCVs);
+router.get("/:cvId/download", ctrl.getPresignedURL);
+
+router.get("/", ctrl.getMyCVs);
 
 export default router;

@@ -1,7 +1,6 @@
 import { Router } from "express";
 import authCtrl from "../controllers/auth";
 import userCtrl from "../controllers/user";
-import middlewares from "../middlewares";
 import isAuthenticated from "../middlewares/authenticated";
 import multer from "multer";
 

@@ -1,25 +1,22 @@
 import { Router } from "express";
 import isAuthenticated from "../middlewares/authenticated";
 import candidateCtrl from "../controllers/candidate";
+import { isAuthorized } from "../middlewares";
 
 const router = Router();
 
-router.get("/", isAuthenticated, candidateCtrl.getCandidates);
+router.use(isAuthenticated);
 
-router.get("/:candidateId", isAuthenticated, candidateCtrl.getCandidate);
+router.use(isAuthorized(["candidate"]));
 
-router.patch(
-  "/update-personal",
-  isAuthenticated,
-  candidateCtrl.updateCandidatePersonal,
-);
+router.get("/", candidateCtrl.getCandidates);
 
-router.patch(
-  "/update-profile",
-  isAuthenticated,
-  candidateCtrl.updateCandidateProfile,
-);
+router.get("/:candidateId", candidateCtrl.getCandidate);
 
-router.patch("/update-contact", isAuthenticated, candidateCtrl.updateContact);
+router.patch("/update-personal", candidateCtrl.updateCandidatePersonal);
+
+router.patch("/update-profile", candidateCtrl.updateCandidateProfile);
+
+router.patch("/update-contact", candidateCtrl.updateContact);
 
 export default router;

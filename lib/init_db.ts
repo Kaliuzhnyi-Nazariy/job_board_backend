@@ -57,7 +57,7 @@ id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     description VARCHAR(256)
         CHECK (char_length(trim(description)) BETWEEN 20 AND 1048),
 
-    responsibilities VARCHAR(256) CHECK (char_length(trim(description)) BETWEEN 20 AND 1048),
+    responsibilities TEXT CHECK (char_length(trim(responsibilities)) BETWEEN 20 AND 1048),
 
     work_time workTimes,
     owner_id INT REFERENCES users(id) ON DELETE CASCADE,
@@ -99,7 +99,10 @@ job_id UUID REFERENCES jobs(id)  ON DELETE CASCADE NOT NULL,
 covering_letter VARCHAR(512),
 status statuses default 'applied',
 cv_id UUID REFERENCES cvs(id) NOT NULL,
-applied_at TIMESTAMP DEFAULT now()
+applied_at TIMESTAMP DEFAULT now(),
+
+CONSTRAINT unique_user_job_application UNIQUE (user_id, job_id)
+
  );
  
 

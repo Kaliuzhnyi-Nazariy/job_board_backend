@@ -5,9 +5,14 @@ import cookieParser from "cookie-parser";
 import userRoutes from "./routes/user";
 import jobRoutes from "./routes/job";
 import candidateRoutes from "./routes/candidate";
-import applicationRoutes from "./routes/application";
+import applicationRoutes from "./routes/applications";
 import cvRouters from "./routes/cv";
 import errorRoute from "./routes/error";
+import { errorHandler } from "./helper/errorHandler";
+
+const { FRONTEND_URL } = process.env;
+
+if (!FRONTEND_URL) throw errorHandler(500, "No frontend link");
 
 const app = express();
 
@@ -15,11 +20,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://job-board-eight-beta.vercel.app/",
-      "https://job-board-eight-beta.vercel.app",
-    ],
+    origin: ["http://localhost:5173", FRONTEND_URL],
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   }),

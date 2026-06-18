@@ -116,13 +116,17 @@ const getApplicationsByJobId = async (
   next: NextFunction,
 ) => {
   const { jobId } = req.params;
+  const { userId } = req as unknown as CustomRequest;
 
   if (!jobId) {
     return next(errorHandler(400, "Job id is required"));
   }
 
   try {
-    const result = await applicationService.getApplcationsByJobId(jobId);
+    const result = await applicationService.getApplcationsByJobId(
+      jobId,
+      userId,
+    );
 
     res.status(200).json(result);
   } catch (error) {
@@ -136,6 +140,7 @@ const getApplicationDetails = async (
   next: NextFunction,
 ) => {
   const { jobId, applicationId } = req.params;
+  const { userId } = req as unknown as CustomRequest;
 
   if (!jobId) {
     return next(errorHandler(400, "Job Id is required"));
@@ -149,6 +154,7 @@ const getApplicationDetails = async (
     const result = await applicationService.getApplicationDetails({
       jobId,
       applicationId,
+      userId,
     });
 
     res.status(200).json(result);
@@ -164,6 +170,7 @@ const updateApplicationStatus = async (
 ) => {
   const { jobApplicationId } = req.params;
   const { status } = req.body;
+  const { userId } = req as unknown as CustomRequest;
 
   if (!jobApplicationId) {
     return next(errorHandler(400, "Job application id is required"));
@@ -177,6 +184,7 @@ const updateApplicationStatus = async (
     await applicationService.updateApplicationStatus({
       status,
       jobApplicationId,
+      userId,
     });
 
     res.status(200).json();

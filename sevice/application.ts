@@ -74,10 +74,11 @@ const getMyApplicationById = async ({
 
 const getApplcationsByJobId = async (
   jobId: string,
+  userId: string,
 ): Promise<JobApplicatinon[]> => {
   const res = await db.query(
-    `SELECT ja.id, ja.status, ja.applied_at, u.full_name, u.id as user_id, ca.experience, ca.education, ca.speciality FROM job_applications ja LEFT JOIN users u ON ja.user_id = u.id LEFT JOIN candidate_profiles ca ON ca.user_id = u.id WHERE ja.job_id = $1 ORDER BY ja.applied_at DESC;`,
-    [jobId],
+    `SELECT ja.id, ja.status, ja.applied_at, u.full_name, u.id as user_id, ca.experience, ca.education, ca.speciality FROM job_applications ja LEFT JOIN users u ON ja.user_id = u.id LEFT JOIN candidate_profiles ca ON ca.user_id = u.id WHERE ja.job_id = $1 AND j.owner_id=$2 ORDER BY ja.applied_at DESC;`,
+    [jobId, userId],
   );
 
   return res.rows;
@@ -86,13 +87,15 @@ const getApplcationsByJobId = async (
 const getApplicationDetails = async ({
   jobId,
   applicationId,
+  userId,
 }: {
   jobId: string;
   applicationId: string;
+  userId: string;
 }) => {
   const res = await db.query(
-    `SELECT ja.*, u.full_name, u.email, cp.*, c.filename FROM job_applications ja LEFT JOIN users u ON ja.user_id = u.id LEFT JOIN candidate_profiles cp ON cp.user_id = u.id LEFT JOIN cvs c ON c.id=ja.cv_id  WHERE ja.job_id = $1 AND ja.id = $2;`,
-    [jobId, applicationId],
+    `SELECT ja.*, u.full_name, u.email, cp.*, c.filename FROM job_applications ja LEFT JOIN users u ON ja.user_id = u.id LEFT JOIN candidate_profiles cp ON cp.user_id = u.id LEFT JOIN cvs c ON c.id=ja.cv_id  WHERE ja.job_id = $1 AND ja.id = $2 AND j.owner_id=$3;`,
+    [jobId, applicationId, userId],
   );
 
   return res.rows[0];
@@ -101,15 +104,17 @@ const getApplicationDetails = async ({
 const updateApplicationStatus = async ({
   status,
   jobApplicationId,
+  userId,
 }: {
   status: "rejected" | "accepted";
   jobApplicationId: string;
+  userId: string;
 }) => {
   await db.query(
     `
-      UPDATE job_applications SET status = $1 WHERE job_applications.id = $2;
+      UPDATE job_applications ja SET status = $1 FROM jobs j WHERE ja.job_id = j.id AND ja.id = $2 AND j.owner_id = $3;
 `,
-    [status, jobApplicationId],
+    [status, jobApplicationId, userId],
   );
 };
 
