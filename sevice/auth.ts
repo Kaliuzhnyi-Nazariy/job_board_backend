@@ -59,6 +59,7 @@ const signup = async ({
   const payload = {
     id: newUser.rows[0].id,
     email: newUser.rows[0].email,
+    role: newUser.rows[0].role,
   };
 
   const token = jwt.sign(payload, JWT_SECRET!, {
@@ -211,6 +212,14 @@ const changePassword = async ({
 
   if (isToken.rows.length == 0) {
     throw errorHandler(403, "You don't have permission to change password");
+  }
+
+  if (isToken.rows[0].expires_at > Date.now()) {
+    await db.query("DELETE FROM password_reset_tokens WHERE id=$1 ", [
+      isToken.rows[0].id,
+    ]);
+
+    throw errorHandler(400, "Token expired");
   }
 
   const res = isToken.rows[0];
