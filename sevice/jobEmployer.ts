@@ -19,6 +19,26 @@ const postJob = async ({
   description,
   owner,
 }: PostJob): Promise<EmployerJobRes> => {
+  const { limits } = (
+    await db.query(
+      `SELECT limits FROM subscriptionsPlan sp LEFT JOIN subscriptions s ON sp.id = s.plan_id WHERE s.user_id=$1;
+`,
+      [owner],
+    )
+  ).rows[0];
+
+  if (!limits) {
+    throw errorHandler(401, "No subscriptions found");
+  }
+
+  const myJobsCount = (
+    await db.query("SELECT COUNT(*) FROM jobs WHERE owner_id=$1", [owner])
+  ).rows[0].count;
+
+  if (myJobsCount >= limits) {
+    throw errorHandler(400, "Subscription limits are reached");
+  }
+
   const newJob = await db.query(
     "INSERT INTO jobs (title, location, position, salary, education, experience, description, responsibilities, work_time, owner_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *",
     [
