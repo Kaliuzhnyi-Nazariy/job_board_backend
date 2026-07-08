@@ -7,7 +7,7 @@ const router = Router();
 
 router.use(isAuthenticated);
 
-router.use(isAuthorized(["candidate"]));
+router.use(isAuthorized(["employer"]));
 
 router.get("/", candidateCtrl.getCandidates);
 

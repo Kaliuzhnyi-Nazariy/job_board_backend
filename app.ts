@@ -7,6 +7,7 @@ import jobRoutes from "./routes/job";
 import candidateRoutes from "./routes/candidate";
 import applicationRoutes from "./routes/applications";
 import cvRouters from "./routes/cv";
+import subscriptionsRouters from "./routes/subscriptions";
 import errorRoute from "./routes/error";
 import { errorHandler } from "./helper/errorHandler";
 
@@ -16,8 +17,6 @@ if (!FRONTEND_URL) throw errorHandler(500, "No frontend link");
 
 const app = express();
 
-app.use(express.json());
-
 app.use(
   cors({
     origin: ["http://localhost:5173", FRONTEND_URL],
@@ -26,7 +25,12 @@ app.use(
   }),
 );
 
-// app.use(cookieParser());
+app.use((req, res, next) => {
+  if (req.originalUrl === "/api/subscriptions/subscribe/webhook") {
+    return next();
+  }
+  express.json()(req, res, next);
+});
 
 app.use("/api/user", userRoutes);
 
@@ -37,6 +41,8 @@ app.use("/api/candidate", candidateRoutes);
 app.use("/api/application", applicationRoutes);
 
 app.use("/api/cv", cvRouters);
+
+app.use("/api/subscriptions", subscriptionsRouters);
 
 app.use(errorRoute.notFoundError);
 

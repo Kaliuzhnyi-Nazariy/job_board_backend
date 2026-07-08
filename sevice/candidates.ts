@@ -91,8 +91,6 @@ WHERE u.id = $1;`,
 // make amultiple updates, for personal and candidates profile data, also split candidate upd request
 
 const updatePersonal = async (data: UpdateCandidateProfile) => {
-  // console.log({ data });
-
   await db.query("BEGIN");
 
   try {

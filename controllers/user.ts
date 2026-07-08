@@ -4,10 +4,10 @@ import { CustomRequest } from "../middlewares/interfaces";
 import userService from "../sevice/user";
 import { errorHandler } from "../helper/errorHandler";
 import helper from "../helper";
+import { getUser } from "../helper/getUser";
 
 const getMe = async (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = req as unknown as CustomRequest;
-
+  const userId = getUser(req);
   if (!userId) {
     return next(errorHandler(401, "User not found"));
   }
@@ -27,8 +27,7 @@ const changePassword = async (
   next: NextFunction,
 ) => {
   const { oldPassword, newPassword, confirmPassword } = req.body;
-  const { userId } = req as unknown as CustomRequest;
-
+  const userId = getUser(req);
   if (!userId) {
     return next(errorHandler(401, "User not found"));
   }
@@ -55,8 +54,7 @@ const deleteAccount = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { userId } = req as unknown as CustomRequest;
-
+  const userId = getUser(req);
   if (!userId) {
     return next(errorHandler(401, "User not found"));
   }
@@ -85,8 +83,7 @@ const updatePhoto = async (req: Request, res: Response, next: NextFunction) => {
     return next(errorHandler(400, "Photo should be less than 1mb"));
   }
 
-  const { userId } = req as unknown as CustomRequest;
-
+  const userId = getUser(req);
   if (!userId) {
     return next(errorHandler(401, "User not found"));
   }
@@ -101,7 +98,7 @@ const updatePhoto = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const deletePhoto = async (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = req as unknown as CustomRequest;
+  const userId = getUser(req);
 
   try {
     await userService.deletePhoto(userId);

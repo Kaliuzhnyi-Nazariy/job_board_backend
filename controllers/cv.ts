@@ -2,10 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import { errorHandler } from "../helper/errorHandler";
 import cvService from "../sevice/cv";
 import { CustomRequest } from "../middlewares/interfaces";
+import { getUser } from "../helper/getUser";
 
 const uploadCV = async (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = req as unknown as CustomRequest;
-
+  const userId = getUser(req);
   if (!req.file) {
     return next(errorHandler(400, "File is required"));
   }
@@ -43,8 +43,7 @@ const deleteCV = async (req: Request, res: Response, next: NextFunction) => {
     return next(errorHandler(400, "CV id is required"));
   }
 
-  const { userId } = req as unknown as CustomRequest;
-
+  const userId = getUser(req);
   try {
     await cvService.deleteCV(userId, cvId);
 
@@ -75,8 +74,7 @@ const updateCVFile = async (
     return next(errorHandler(400, "CV id is required"));
   }
 
-  const { userId } = req as unknown as CustomRequest;
-
+  const userId = getUser(req);
   try {
     const result = await cvService.updateCV(
       userId,
@@ -98,8 +96,7 @@ const getPresignedURL = async (
   next: NextFunction,
 ) => {
   const { cvId } = req.params;
-  const { userId } = req as unknown as CustomRequest;
-
+  const userId = getUser(req);
   if (!cvId) {
     return next(errorHandler(400, "CV id is required"));
   }
@@ -114,8 +111,7 @@ const getPresignedURL = async (
 };
 
 const getMyCVs = async (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = req as unknown as CustomRequest;
-
+  const userId = getUser(req);
   try {
     const result = await cvService.getCVs(userId);
     res.status(200).json(result);

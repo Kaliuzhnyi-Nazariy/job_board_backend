@@ -4,10 +4,12 @@ import { isAuthorized } from "../../middlewares";
 
 const router = Router();
 
-router.use(isAuthorized(["candidate"]));
+router.get("/jobs", isAuthorized(["candidate"]), jobController.getJobs);
 
-router.get("/jobs", jobController.getJobs);
-
-router.get("/jobs/:jobId", jobController.getJobById);
+router.get(
+  "/jobs/:jobId",
+  isAuthorized(["candidate"]),
+  jobController.getJobById,
+);
 
 export default router;
