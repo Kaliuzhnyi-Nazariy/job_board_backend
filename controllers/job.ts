@@ -5,11 +5,12 @@ import employerService from "../sevice/jobEmployer";
 import candidateService from "../sevice/jobCandidate";
 
 import { errorHandler } from "../helper/errorHandler";
+import { getUser } from "../helper/getUser";
 
 // employer
 
 const postJob = async (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = req as unknown as CustomRequest;
+  const userId = getUser(req);
   const {
     title,
     position,
@@ -43,7 +44,7 @@ const postJob = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const getMyJobs = async (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = req as unknown as CustomRequest;
+  const userId = getUser(req);
   const { page } = req.query;
 
   if (!userId) {
@@ -71,7 +72,7 @@ const getMyJobById = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { userId } = req as unknown as CustomRequest;
+  const userId = getUser(req);
   const { jobId } = req.params;
 
   if (!jobId) {
@@ -91,7 +92,7 @@ const getMyJobById = async (
 };
 
 const updateJob = async (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = req as unknown as CustomRequest;
+  const userId = getUser(req);
   const { jobId } = req.params;
   const {
     title,
@@ -131,7 +132,7 @@ const updateJob = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const deleteJob = async (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = req as unknown as CustomRequest;
+  const userId = getUser(req);
   const { jobId } = req.params;
 
   if (!jobId) {
@@ -152,8 +153,7 @@ const getFiveRecentJobs = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { userId } = req as unknown as CustomRequest;
-
+  const userId = getUser(req);
   try {
     const result = await employerService.getFiveRecentJobs(userId);
 
@@ -166,7 +166,6 @@ const getFiveRecentJobs = async (
 // candidate
 
 const getJobs = async (req: Request, res: Response, next: NextFunction) => {
-  // console.log(req.params);
   const { page, limit, order, location, title } = req.query;
 
   if (!page || !limit) {

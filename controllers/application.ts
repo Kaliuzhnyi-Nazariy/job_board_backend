@@ -2,11 +2,12 @@ import { NextFunction, Request, Response } from "express";
 import { CustomRequest } from "../middlewares/interfaces";
 import applicationService from "../sevice/application";
 import { errorHandler } from "../helper/errorHandler";
+import { getUser } from "../helper/getUser";
 
 // candidate
 
 const applyToJob = async (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = req as unknown as CustomRequest;
+  const userId = getUser(req);
   const { jobId } = req.params;
   const { coveringLetter, cvId } = req.body;
 
@@ -37,8 +38,7 @@ const getMyApplicationsCount = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { userId } = req as unknown as CustomRequest;
-
+  const userId = getUser(req);
   if (!userId) {
     return next(errorHandler(401));
   }
@@ -57,7 +57,7 @@ const getMyApplications = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { userId } = req as unknown as CustomRequest;
+  const userId = getUser(req);
   const { page } = req.query;
 
   if (!userId) {
@@ -85,7 +85,7 @@ const getMyApplicationById = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { userId } = req as unknown as CustomRequest;
+  const userId = getUser(req);
   const { jobApplicationId } = req.params;
 
   if (!userId) {
@@ -116,8 +116,7 @@ const getApplicationsByJobId = async (
   next: NextFunction,
 ) => {
   const { jobId } = req.params;
-  const { userId } = req as unknown as CustomRequest;
-
+  const userId = getUser(req);
   if (!jobId) {
     return next(errorHandler(400, "Job id is required"));
   }
@@ -140,8 +139,7 @@ const getApplicationDetails = async (
   next: NextFunction,
 ) => {
   const { jobId, applicationId } = req.params;
-  const { userId } = req as unknown as CustomRequest;
-
+  const userId = getUser(req);
   if (!jobId) {
     return next(errorHandler(400, "Job Id is required"));
   }
@@ -170,8 +168,7 @@ const updateApplicationStatus = async (
 ) => {
   const { jobApplicationId } = req.params;
   const { status } = req.body;
-  const { userId } = req as unknown as CustomRequest;
-
+  const userId = getUser(req);
   if (!jobApplicationId) {
     return next(errorHandler(400, "Job application id is required"));
   }
@@ -198,8 +195,7 @@ const getMyRecentApplications = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { userId } = req as unknown as CustomRequest;
-
+  const userId = getUser(req);
   if (!userId) {
     return next(errorHandler(401));
   }

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import candidateService from "../sevice/candidates";
 import { errorHandler } from "../helper/errorHandler";
 import { CustomRequest } from "../middlewares/interfaces";
+import { getUser } from "../helper/getUser";
 
 const getCandidates = async (
   req: Request,
@@ -53,7 +54,7 @@ const updateCandidatePersonal = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { userId } = req as unknown as CustomRequest;
+  const userId = getUser(req);
   const { full_name, speciality, experience, education, website } = req.body;
 
   if (
@@ -88,7 +89,7 @@ const updateCandidateProfile = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { userId } = req as unknown as CustomRequest;
+  const userId = getUser(req);
   const { biography, date_of_birth, gender, experience, education } = req.body;
 
   if (
@@ -124,8 +125,7 @@ const updateContact = async (
   next: NextFunction,
 ) => {
   const { location, email, phone } = req.body;
-  const { userId } = req as unknown as CustomRequest;
-
+  const userId = getUser(req);
   if (location == null || email == null || !email || phone == null)
     return next(errorHandler(400, "Not all fields were sent"));
 
