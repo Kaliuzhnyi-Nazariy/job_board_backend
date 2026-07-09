@@ -24,7 +24,15 @@ export const seedSubscriptions = async () => {
       });
 
       await db.query(
-        "INSERT INTO subscriptionsPlan (name, price, stripe_product_id, stripe_price_id, limits) VALUES ($1, $2, $3, $4, $5)",
+        `INSERT INTO subscriptionsPlan (name, price, stripe_product_id,   stripe_price_id, limits) 
+          VALUES ($1, $2, $3, $4, $5)
+          ON CONFLICT (stripe_product_id) 
+          DO UPDATE SET 
+          name = EXCLUDED.name,
+          price = EXCLUDED.price,
+          stripe_price_id = EXCLUDED.stripe_price_id,
+          limits = EXCLUDED.limits;
+        `,
         [name, price, product.id, stripePrice.id, limits],
       );
 
