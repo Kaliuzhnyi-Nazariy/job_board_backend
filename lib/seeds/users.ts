@@ -13,6 +13,14 @@ export const usersSeed = async () => {
   await db.query(
     `
     INSERT INTO users (role, full_name, username, email, password) VALUES ($1, $2, $3, $4, $5)`,
-    ["customer", "customer", "customer", "customer@email.com", hashedPassword],
+    [
+      "candidate",
+      "candidate",
+      "candidate",
+      "candidate@email.com",
+      hashedPassword,
+    ],
   );
+
+  console.log("users seed finished!");
 };
